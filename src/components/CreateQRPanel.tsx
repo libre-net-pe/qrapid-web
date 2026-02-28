@@ -8,17 +8,17 @@ interface Props {
   onCreated: (record: QRRecord) => void;
 }
 
-type ApiQRCode = components['schemas']['QRCode'];
+type ApiQRCode = components['schemas']['QrCode'];
 
 function toRecord(data: ApiQRCode | null, label: string, content: string, type: QRType): QRRecord {
   const today = new Date().toISOString().slice(0, 10) as QRRecord['date'];
   return {
     label: data?.label ?? label,
     content: data?.content ?? content,
-    type: (data?.type as QRType | undefined) ?? type,
-    folder: data?.folder ?? '—',
-    date: (data?.date as QRRecord['date'] | undefined) ?? today,
-    score: data?.score ?? 80,
+    type: (data?.type === 'url' ? 'URL' : data?.type === 'text' ? 'Text' : type),
+    folder: data?.folder?.name ?? '—',
+    date: (data?.createdAt?.slice(0, 10) as QRRecord['date'] | undefined) ?? today,
+    score: data?.scannability?.score ?? 80,
   };
 }
 
