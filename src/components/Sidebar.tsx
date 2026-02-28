@@ -1,15 +1,21 @@
 import { useAuth } from '@/contexts/useAuth';
+import { useCurrentUser } from '@/hooks/useCurrentUser';
 
 export function Sidebar() {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
+  const { profile } = useCurrentUser();
 
-  const displayName = user?.displayName ?? 'User';
-  const initials = displayName
-    .split(' ')
-    .map(n => n[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
+  const displayName = profile?.displayName ?? '…';
+  const email = profile?.email ?? '';
+  const plan = profile?.plan ?? null;
+  const initials = displayName === '…'
+    ? '…'
+    : displayName
+        .split(' ')
+        .map(n => n[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase();
 
   return (
     <aside className="sb">
@@ -69,6 +75,8 @@ export function Sidebar() {
         <div className="ava"><span className="ava-txt">{initials}</span></div>
         <div>
           <div className="user-name">{displayName}</div>
+          <div className="user-email">{email}</div>
+          {plan && <span className="user-plan">{plan}</span>}
           <button className="user-action" onClick={logout}>Sign out</button>
         </div>
       </div>
