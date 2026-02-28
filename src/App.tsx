@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent } from 'react';
+import { useState, useMemo, type ChangeEvent } from 'react';
 import type { QRRecord } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
@@ -16,7 +16,7 @@ export default function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [folderFilter, setFolderFilter] = useState('All folders');
 
-  const ALL_FOLDERS = ['All folders', ...new Set(records.map(r => r.folder).filter(f => f !== '—'))];
+  const ALL_FOLDERS = useMemo(() => ['All folders', ...new Set(records.map(r => r.folder).filter(f => f !== '—'))], [records]);
 
   const filtered = records.filter(r => {
     const matchSearch = r.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
