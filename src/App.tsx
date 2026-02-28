@@ -3,8 +3,9 @@ import type { QRRecord } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
 import { DetailPanel } from '@/components/DetailPanel';
+import { CreateQRPanel } from '@/components/CreateQRPanel';
 
-const RECORDS: QRRecord[] = [
+const INITIAL_RECORDS: QRRecord[] = [
   { label: 'Company Website',   content: 'https://example.com',                type: 'URL',  folder: 'Marketing', date: '2026-02-15', score: 87 },
   { label: 'Event WiFi Info',   content: 'Network: ConfWifi_2025',             type: 'Text', folder: 'Events',    date: '2026-02-10', score: 92 },
   { label: 'Product Catalogue', content: 'https://shop.example.com/catalogue', type: 'URL',  folder: 'Retail',    date: '2026-01-28', score: 79 },
@@ -12,19 +13,21 @@ const RECORDS: QRRecord[] = [
   { label: 'Restaurant Menu',   content: 'https://bistro.local/menu',          type: 'URL',  folder: '—',         date: '2025-12-20', score: 68 },
 ];
 
-const ALL_FOLDERS = ['All folders', ...new Set(RECORDS.map(r => r.folder).filter(f => f !== '—'))];
-
 function avgScore(records: QRRecord[]): number {
   if (!records.length) return 0;
   return Math.round(records.reduce((sum, r) => sum + r.score, 0) / records.length);
 }
 
 export default function App() {
+  const [records, setRecords] = useState<QRRecord[]>(INITIAL_RECORDS);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [folderFilter, setFolderFilter] = useState('All folders');
+  const [showCreate, setShowCreate] = useState(false);
 
-  const filtered = RECORDS.filter(r => {
+  const allFolders = ['All folders', ...new Set(records.map(r => r.folder).filter(f => f !== '—'))];
+
+  const filtered = records.filter(r => {
     const matchSearch = r.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
                         r.content.toLowerCase().includes(searchQuery.toLowerCase());
     const matchFolder = folderFilter === 'All folders' || r.folder === folderFilter;
@@ -42,6 +45,14 @@ export default function App() {
   function handleFolderChange(e: ChangeEvent<HTMLSelectElement>) {
     setFolderFilter(e.target.value);
     setSelectedIndex(0);
+  }
+
+  function handleCreated(record: QRRecord) {
+    setRecords(prev => [record, ...prev]);
+    setSearchQuery('');
+    setFolderFilter('All folders');
+    setSelectedIndex(0);
+    setShowCreate(false);
   }
 
   return (
@@ -71,9 +82,9 @@ export default function App() {
               value={folderFilter}
               onChange={handleFolderChange}
             >
-              {ALL_FOLDERS.map(f => <option key={f}>{f}</option>)}
+              {allFolders.map(f => <option key={f}>{f}</option>)}
             </select>
-            <button className="btn-new" onClick={() => alert('Create flow')}>+ New Code</button>
+            <button className="btn-new" onClick={() => setShowCreate(true)}>+ New Code</button>
           </div>
         </div>
 
@@ -86,6 +97,13 @@ export default function App() {
           <DetailPanel record={selectedRecord} />
         </div>
       </main>
+
+      {showCreate && (
+        <CreateQRPanel
+          onClose={() => setShowCreate(false)}
+          onCreated={handleCreated}
+        />
+      )}
     </div>
   );
 }
