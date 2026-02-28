@@ -1,6 +1,14 @@
-import { makeQR } from '../utils/makeQR';
+import type { QRRecord } from '@/types';
+import { makeQR } from '@/utils/makeQR';
+import { getBadgeClass } from '@/utils/badges';
 
-export function QRTable({ records, selectedIndex, onSelect }) {
+interface QRTableProps {
+  records: QRRecord[];
+  selectedIndex: number;
+  onSelect: (index: number) => void;
+}
+
+export function QRTable({ records, selectedIndex, onSelect }: QRTableProps) {
   return (
     <div className="tbl-area">
       <div className="col-hdr">
@@ -27,7 +35,7 @@ export function QRTable({ records, selectedIndex, onSelect }) {
             <div className="tr-name">{r.label}</div>
             <div className="tr-mono">{r.content}</div>
             <div>
-              <span className={`badge ${r.type === 'URL' ? 'badge-url' : 'badge-text'}`}>
+              <span className={`badge ${getBadgeClass(r.type)}`}>
                 {r.type}
               </span>
             </div>

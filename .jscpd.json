@@ -1,0 +1,8 @@
+{
+  "threshold": 5,
+  "reporters": ["console", "json"],
+  "output": "reports/duplication",
+  "ignore": ["**/*.css", "**/*.json", "**/node_modules/**", "**/dist/**"],
+  "languages": ["typescript", "tsx"],
+  "path": ["src"]
+}
