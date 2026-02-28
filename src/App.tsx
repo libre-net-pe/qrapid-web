@@ -1,17 +1,10 @@
-import { useState, type ChangeEvent } from 'react';
+import { useState, useMemo, type ChangeEvent } from 'react';
 import type { QRRecord } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
 import { DetailPanel } from '@/components/DetailPanel';
 import { CreateQRPanel } from '@/components/CreateQRPanel';
-
-const INITIAL_RECORDS: QRRecord[] = [
-  { label: 'Company Website',   content: 'https://example.com',                type: 'URL',  folder: 'Marketing', date: '2026-02-15', score: 87 },
-  { label: 'Event WiFi Info',   content: 'Network: ConfWifi_2025',             type: 'Text', folder: 'Events',    date: '2026-02-10', score: 92 },
-  { label: 'Product Catalogue', content: 'https://shop.example.com/catalogue', type: 'URL',  folder: 'Retail',    date: '2026-01-28', score: 79 },
-  { label: 'Business Card',     content: 'https://jorge.me/contact',           type: 'URL',  folder: 'Personal',  date: '2026-01-05', score: 95 },
-  { label: 'Restaurant Menu',   content: 'https://bistro.local/menu',          type: 'URL',  folder: '—',         date: '2025-12-20', score: 68 },
-];
+import { useQRCodes } from '@/hooks/useQRCodes';
 
 function avgScore(records: QRRecord[]): number {
   if (!records.length) return 0;
@@ -19,13 +12,19 @@ function avgScore(records: QRRecord[]): number {
 }
 
 export default function App() {
-  const [records, setRecords] = useState<QRRecord[]>(INITIAL_RECORDS);
+  const { records: fetchedRecords, loading } = useQRCodes();
+  const [additions, setAdditions] = useState<QRRecord[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [folderFilter, setFolderFilter] = useState('All folders');
   const [showCreate, setShowCreate] = useState(false);
 
-  const allFolders = ['All folders', ...new Set(records.map(r => r.folder).filter(f => f !== '—'))];
+  const records = useMemo(() => [...additions, ...fetchedRecords], [additions, fetchedRecords]);
+
+  const allFolders = useMemo(
+    () => ['All folders', ...new Set(records.map(r => r.folder).filter(f => f !== '—'))],
+    [records],
+  );
 
   const filtered = records.filter(r => {
     const matchSearch = r.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -48,7 +47,7 @@ export default function App() {
   }
 
   function handleCreated(record: QRRecord) {
-    setRecords(prev => [record, ...prev]);
+    setAdditions(prev => [record, ...prev]);
     setSearchQuery('');
     setFolderFilter('All folders');
     setSelectedIndex(0);
@@ -89,12 +88,18 @@ export default function App() {
         </div>
 
         <div className="content">
-          <QRTable
-            records={filtered}
-            selectedIndex={safeIndex}
-            onSelect={setSelectedIndex}
-          />
-          <DetailPanel record={selectedRecord} />
+          {loading ? (
+            <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>
+          ) : (
+            <>
+              <QRTable
+                records={filtered}
+                selectedIndex={safeIndex}
+                onSelect={setSelectedIndex}
+              />
+              <DetailPanel record={selectedRecord} />
+            </>
+          )}
         </div>
       </main>
 
