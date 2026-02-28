@@ -24,11 +24,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   async function signInWithGoogle() {
-    await signInWithPopup(auth, googleProvider);
+    try {
+      await signInWithPopup(auth, googleProvider);
+    } catch (error) {
+      console.error('Error signing in with Google', error);
+    }
   }
 
   async function logout() {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Error signing out', error);
+    }
   }
 
   return (

@@ -10,6 +10,12 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+for (const key of Object.keys(firebaseConfig)) {
+  if (!firebaseConfig[key as keyof typeof firebaseConfig]) {
+    throw new Error(`Missing Firebase config value for "${key}". Please check your .env file.`);
+  }
+}
+
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();

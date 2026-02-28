@@ -69,7 +69,7 @@ export function Sidebar() {
         <div className="ava"><span className="ava-txt">{initials}</span></div>
         <div>
           <div className="user-name">{displayName}</div>
-          <div className="user-action" onClick={logout} style={{ cursor: 'pointer' }}>Sign out</div>
+          <button className="user-action" onClick={logout}>Sign out</button>
         </div>
       </div>
     </aside>
