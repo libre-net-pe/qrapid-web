@@ -3,6 +3,7 @@ import type { QRRecord } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
 import { DetailPanel } from '@/components/DetailPanel';
+import { CreateQRPanel } from '@/components/CreateQRPanel';
 import { useQRCodes } from '@/hooks/useQRCodes';
 
 function avgScore(records: QRRecord[]): number {
@@ -11,12 +12,19 @@ function avgScore(records: QRRecord[]): number {
 }
 
 export default function App() {
-  const { records, loading } = useQRCodes();
+  const { records: fetchedRecords, loading } = useQRCodes();
+  const [additions, setAdditions] = useState<QRRecord[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [folderFilter, setFolderFilter] = useState('All folders');
+  const [showCreate, setShowCreate] = useState(false);
 
-  const ALL_FOLDERS = useMemo(() => ['All folders', ...new Set(records.map(r => r.folder).filter(f => f !== '—'))], [records]);
+  const records = useMemo(() => [...additions, ...fetchedRecords], [additions, fetchedRecords]);
+
+  const allFolders = useMemo(
+    () => ['All folders', ...new Set(records.map(r => r.folder).filter(f => f !== '—'))],
+    [records],
+  );
 
   const filtered = records.filter(r => {
     const matchSearch = r.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -36,6 +44,14 @@ export default function App() {
   function handleFolderChange(e: ChangeEvent<HTMLSelectElement>) {
     setFolderFilter(e.target.value);
     setSelectedIndex(0);
+  }
+
+  function handleCreated(record: QRRecord) {
+    setAdditions(prev => [record, ...prev]);
+    setSearchQuery('');
+    setFolderFilter('All folders');
+    setSelectedIndex(0);
+    setShowCreate(false);
   }
 
   return (
@@ -65,9 +81,9 @@ export default function App() {
               value={folderFilter}
               onChange={handleFolderChange}
             >
-              {ALL_FOLDERS.map(f => <option key={f}>{f}</option>)}
+              {allFolders.map(f => <option key={f}>{f}</option>)}
             </select>
-            <button className="btn-new" onClick={() => alert('Create flow')}>+ New Code</button>
+            <button className="btn-new" onClick={() => setShowCreate(true)}>+ New Code</button>
           </div>
         </div>
 
@@ -86,6 +102,13 @@ export default function App() {
           )}
         </div>
       </main>
+
+      {showCreate && (
+        <CreateQRPanel
+          onClose={() => setShowCreate(false)}
+          onCreated={handleCreated}
+        />
+      )}
     </div>
   );
 }
