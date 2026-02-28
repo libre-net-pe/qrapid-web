@@ -504,6 +504,13 @@
     reprism "^0.0.11"
     spark-md5 "^3.0.2"
 
+"@libre-net-pe/qrapid-sdk@0.1.0":
+  version "0.1.0"
+  resolved "https://npm.pkg.github.com/download/@libre-net-pe/qrapid-sdk/0.1.0/3bce8e0b0f01fe44345ca411314e49dc18f861e9#3bce8e0b0f01fe44345ca411314e49dc18f861e9"
+  integrity sha512-MciSIsK8FQ1xVkfAXb/xZCLubHENqyE78P0DKwuQfSYDwChilO+R/LAkL16XdGwrB7a8ud2uZLFtCZvIKzBjkg==
+  dependencies:
+    openapi-fetch "^0.13"
+
 "@microsoft/eslint-formatter-sarif@^3.1.0":
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/@microsoft/eslint-formatter-sarif/-/eslint-formatter-sarif-3.1.0.tgz#7fa03636e116939d77efaa301a31b340ca93059b"
@@ -1962,6 +1969,18 @@ onetime@^5.1.0:
   integrity sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==
   dependencies:
     mimic-fn "^2.1.0"
+
+openapi-fetch@^0.13:
+  version "0.13.8"
+  resolved "https://registry.yarnpkg.com/openapi-fetch/-/openapi-fetch-0.13.8.tgz#1769da06e30d19f7568cd0e60db8ca61ea83a2fa"
+  integrity sha512-yJ4QKRyNxE44baQ9mY5+r/kAzZ8yXMemtNAOFwOzRXJscdjSxxzWSNlyBAr+o5JjkUw9Lc3W7OIoca0cY3PYnQ==
+  dependencies:
+    openapi-typescript-helpers "^0.0.15"
+
+openapi-typescript-helpers@^0.0.15:
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/openapi-typescript-helpers/-/openapi-typescript-helpers-0.0.15.tgz#96ffa762a5e01ef66a661b163d5f1109ed1967ed"
+  integrity sha512-opyTPaunsklCBpTK8JGef6mfPhLSnyy5a0IN9vKtx3+4aExf+KxEqYwIy3hqkedXIB97u357uLMJsOnm3GVjsw==
 
 optionator@^0.9.3:
   version "0.9.4"
