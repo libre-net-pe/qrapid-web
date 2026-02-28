@@ -5,6 +5,6 @@ export interface QRRecord {
   content: string;
   type: QRType;
   folder: string;
-  date: string;
+  date: `${number}-${number}-${number}`;
   score: number;
 }
