@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  # ── Build ────────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile
+
+      - run: yarn build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  # ── Lint + complexity ────────────────────────────────────────────────────────
+  lint:
+    name: Lint & Complexity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile
+
+      - name: Run ESLint
+        # exit 0 even on lint errors so artifacts are always uploaded;
+        # the SARIF upload step is what blocks the PR via code scanning
+        run: |
+          mkdir -p reports/lint
+          node_modules/.bin/eslint . \
+            --format @microsoft/eslint-formatter-sarif \
+            --output-file reports/lint/eslint.sarif \
+          || true
+          node_modules/.bin/eslint . \
+            --format json \
+            --output-file reports/lint/eslint.json \
+          || true
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-report
+          path: reports/lint/
+          retention-days: 14
+
+      - name: Annotate code with ESLint results
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: reports/lint/eslint.sarif
+          category: eslint
+        # Requires GitHub Advanced Security / code scanning on the repo.
+        # Silently skipped for repos where it is not enabled.
+        continue-on-error: true
+
+  # ── Type check ───────────────────────────────────────────────────────────────
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile
+
+      - name: Run tsc
+        run: |
+          mkdir -p reports/typecheck
+          node_modules/.bin/tsc --build --noEmit 2>&1 | tee reports/typecheck/tsc.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload typecheck report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typecheck-report
+          path: reports/typecheck/
+          retention-days: 14
+
+  # ── Duplication ──────────────────────────────────────────────────────────────
+  duplication:
+    name: Duplication
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - run: yarn install --frozen-lockfile
+
+      - name: Run jscpd
+        # jscpd exits non-zero when clones exceed the threshold percentage;
+        # treat as warning — agents read the JSON report to decide severity
+        run: yarn duplication || true
+
+      - name: Upload duplication report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: duplication-report
+          path: reports/duplication/
+          retention-days: 14

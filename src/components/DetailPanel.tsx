@@ -1,15 +1,16 @@
-import { makeQR } from '../utils/makeQR';
+import type { QRRecord } from '@/types';
+import { makeQR } from '@/utils/makeQR';
+import { getBadgeClass } from '@/utils/badges';
+import { scoreClass } from '@/utils/score';
 
-function scoreClass(s) {
-  if (s >= 85) return 'score-good';
-  if (s >= 70) return 'score-warn';
-  return 'score-low';
+interface DetailPanelProps {
+  record: QRRecord | null;
 }
 
-export function DetailPanel({ record }) {
+export function DetailPanel({ record }: DetailPanelProps) {
   if (!record) return null;
 
-  const badgeClass = record.type === 'URL' ? 'badge-url' : 'badge-text';
+  const badgeClass = getBadgeClass(record.type);
 
   return (
     <aside className="panel">
