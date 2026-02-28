@@ -218,6 +218,10 @@ nav.sb-nav { flex: 1; padding: 0 12px; }
   opacity: 0.4;
   margin-top: 1px;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
 }
 .user-action:hover { opacity: 0.7; }
 
@@ -607,3 +611,85 @@ aside.panel { animation: panelIn 0.22s ease both; }
 
 /* Ensure full-height layout */
 #root { height: 100%; }
+
+/* ─── Auth loading state ─── */
+.auth-loading {
+  height: 100%;
+  background: var(--sb);
+}
+
+/* ─── Login page ─── */
+.login-shell {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sb);
+}
+
+.login-card {
+  background: var(--main);
+  border: 1px solid var(--div);
+  border-radius: 10px;
+  padding: 48px 44px;
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  box-shadow: 0 4px 24px rgba(30,10,5,0.07);
+  animation: fadeUp 0.3s ease both;
+}
+
+.login-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+  margin-bottom: 10px;
+}
+.login-brand-q {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--si);
+  line-height: 1;
+}
+.login-brand-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--t1);
+  line-height: 1;
+}
+
+.login-tagline {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: var(--t2);
+  opacity: 0.7;
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.login-google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 20px;
+  background: var(--main);
+  border: 1px solid var(--div);
+  border-radius: 6px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--t1);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+}
+.login-google-btn:hover {
+  border-color: var(--si);
+  background: var(--si-bg);
+  box-shadow: 0 2px 8px rgba(196,91,48,0.1);
+}

@@ -1,4 +1,16 @@
+import { useAuth } from '@/contexts/useAuth';
+
 export function Sidebar() {
+  const { user, logout } = useAuth();
+
+  const displayName = user?.displayName ?? 'User';
+  const initials = displayName
+    .split(' ')
+    .map(n => n[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+
   return (
     <aside className="sb">
       <div className="sb-brand">
@@ -54,10 +66,10 @@ export function Sidebar() {
       </nav>
 
       <div className="sb-user">
-        <div className="ava"><span className="ava-txt">JD</span></div>
+        <div className="ava"><span className="ava-txt">{initials}</span></div>
         <div>
-          <div className="user-name">Jorge D.</div>
-          <div className="user-action">Sign out</div>
+          <div className="user-name">{displayName}</div>
+          <button className="user-action" onClick={logout}>Sign out</button>
         </div>
       </div>
     </aside>
