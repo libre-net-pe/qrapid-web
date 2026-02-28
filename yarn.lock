@@ -913,10 +913,10 @@
     reprism "^0.0.11"
     spark-md5 "^3.0.2"
 
-"@libre-net-pe/qrapid-sdk@0.1.0":
-  version "0.1.0"
-  resolved "https://npm.pkg.github.com/download/@libre-net-pe/qrapid-sdk/0.1.0/3bce8e0b0f01fe44345ca411314e49dc18f861e9#3bce8e0b0f01fe44345ca411314e49dc18f861e9"
-  integrity sha512-MciSIsK8FQ1xVkfAXb/xZCLubHENqyE78P0DKwuQfSYDwChilO+R/LAkL16XdGwrB7a8ud2uZLFtCZvIKzBjkg==
+"@libre-net-pe/qrapid-sdk@^0.1.1":
+  version "0.1.1"
+  resolved "https://npm.pkg.github.com/download/@libre-net-pe/qrapid-sdk/0.1.1/90657aa59eadc78b70e425add7166f60e9cb5e7b#90657aa59eadc78b70e425add7166f60e9cb5e7b"
+  integrity sha512-QnJTQE2t6jiKIz/zRH1COu3JJatrrG+kWCKn6grMfLZqnce073h/nBpoOiQwwrHhi2JwFoteu73QeH+xUwIdMQ==
   dependencies:
     openapi-fetch "^0.13"
 
