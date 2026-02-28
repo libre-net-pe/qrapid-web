@@ -5,22 +5,13 @@ import { useAuth } from '@/contexts/useAuth';
 import { createQRapidClient } from '@/lib/qrapidClient';
 
 type QrCode = components['schemas']['QrCode'];
-type Folder = components['schemas']['Folder'];
 
-function buildFolderMap(folders: Folder[]): Map<string, string> {
-  const map = new Map<string, string>();
-  for (const folder of folders) {
-    map.set(folder.id, folder.name);
-  }
-  return map;
-}
-
-function mapQrCode(qr: QrCode, folderMap: Map<string, string>): QRRecord {
+function mapQrCode(qr: QrCode): QRRecord {
   return {
     label: qr.label ?? qr.id,
     content: qr.content,
     type: (qr.type === 'url' ? 'URL' : 'Text') as QRType,
-    folder: qr.folderId ? (folderMap.get(qr.folderId) ?? '—') : '—',
+    folder: qr.folder?.name ?? '—',
     date: qr.createdAt.slice(0, 10) as `${number}-${number}-${number}`,
     score: qr.scannability?.score ?? 0,
   };
@@ -28,16 +19,11 @@ function mapQrCode(qr: QrCode, folderMap: Map<string, string>): QRRecord {
 
 async function loadRecords(token: string): Promise<QRRecord[]> {
   const api = createQRapidClient(token);
-  const [codesRes, foldersRes] = await Promise.all([
-    api.GET('/qr-codes', { params: { query: { limit: 100 } } }),
-    api.GET('/folders', {}),
-  ]);
-  if (codesRes.error || foldersRes.error) {
-    throw new Error('Failed to load QR codes or folders');
+  const codesRes = await api.GET('/qr-codes', { params: { query: { limit: 100 } } });
+  if (codesRes.error) {
+    throw new Error('Failed to load QR codes');
   }
-  const folderMap = buildFolderMap(foldersRes.data?.data ?? []);
-  const qrCodes: QrCode[] = codesRes.data?.data ?? [];
-  return qrCodes.map((qr) => mapQrCode(qr, folderMap));
+  return (codesRes.data?.data ?? []).map(mapQrCode);
 }
 
 export function useQRCodes() {
