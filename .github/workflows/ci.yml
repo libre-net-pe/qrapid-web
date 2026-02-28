@@ -11,6 +11,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - uses: actions/checkout@v4
 
@@ -18,8 +21,11 @@ jobs:
         with:
           node-version: 22
           cache: yarn
+          registry-url: https://npm.pkg.github.com
 
       - run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - run: yarn build
 
@@ -34,6 +40,9 @@ jobs:
   lint:
     name: Lint & Complexity
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - uses: actions/checkout@v4
 
@@ -41,8 +50,11 @@ jobs:
         with:
           node-version: 22
           cache: yarn
+          registry-url: https://npm.pkg.github.com
 
       - run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run ESLint
         # exit 0 even on lint errors so artifacts are always uploaded;
@@ -80,6 +92,9 @@ jobs:
   typecheck:
     name: Type Check
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - uses: actions/checkout@v4
 
@@ -87,8 +102,11 @@ jobs:
         with:
           node-version: 22
           cache: yarn
+          registry-url: https://npm.pkg.github.com
 
       - run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run tsc
         run: |
@@ -108,6 +126,9 @@ jobs:
   duplication:
     name: Duplication
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - uses: actions/checkout@v4
 
@@ -115,8 +136,11 @@ jobs:
         with:
           node-version: 22
           cache: yarn
+          registry-url: https://npm.pkg.github.com
 
       - run: yarn install --frozen-lockfile
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run jscpd
         # jscpd exits non-zero when clones exceed the threshold percentage;
