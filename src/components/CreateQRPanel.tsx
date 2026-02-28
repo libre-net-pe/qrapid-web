@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import { createClient } from '@libre-net-pe/qrapid-sdk';
+import { createClient, type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
 import type { QRRecord, QRType } from '@/types';
 
@@ -8,15 +8,16 @@ interface Props {
   onCreated: (record: QRRecord) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function toRecord(data: any, label: string, content: string, type: QRType): QRRecord {
+type ApiQRCode = components['schemas']['QRCode'];
+
+function toRecord(data: ApiQRCode | null, label: string, content: string, type: QRType): QRRecord {
   const today = new Date().toISOString().slice(0, 10) as QRRecord['date'];
   return {
     label: data?.label ?? label,
     content: data?.content ?? content,
-    type: data?.type ?? type,
+    type: (data?.type as QRType | undefined) ?? type,
     folder: data?.folder ?? '—',
-    date: data?.date ?? today,
+    date: (data?.date as QRRecord['date'] | undefined) ?? today,
     score: data?.score ?? 80,
   };
 }
@@ -24,10 +25,10 @@ function toRecord(data: any, label: string, content: string, type: QRType): QRRe
 async function postQRCode(
   token: string,
   body: { label: string; content: string; type: QRType },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<{ data: any; error: any }> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return (createClient({ token }) as any).POST('/qr-codes', { body });
+): Promise<{ data: ApiQRCode | undefined; error: unknown }> {
+  // The SDK dist does not bundle schema types; cast is required to call POST.
+  const client = createClient({ token }) as { POST: (path: string, opts: { body: unknown }) => Promise<{ data: ApiQRCode | undefined; error: unknown }> };
+  return client.POST('/qr-codes', { body });
 }
 
 export function CreateQRPanel({ onClose, onCreated }: Props) {
@@ -50,7 +51,9 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!label.trim() || !content.trim() || !user) return;
+    const trimmedLabel = label.trim();
+    const trimmedContent = content.trim();
+    if (!trimmedLabel || !trimmedContent || !user) return;
 
     setSubmitting(true);
     setError('');
@@ -58,8 +61,8 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
     try {
       const token = await user.getIdToken();
       const { data, error: apiError } = await postQRCode(token, {
-        label: label.trim(),
-        content: content.trim(),
+        label: trimmedLabel,
+        content: trimmedContent,
         type,
       });
 
@@ -68,7 +71,7 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
         return;
       }
 
-      onCreated(toRecord(data, label.trim(), content.trim(), type));
+      onCreated(toRecord(data ?? null, trimmedLabel, trimmedContent, type));
     } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
@@ -89,12 +92,13 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
         </div>
 
         <form className="create-body" onSubmit={handleSubmit} noValidate>
+          <div className="create-fields">
           <div className="create-field">
             <label className="create-lbl" htmlFor="qr-label">Label</label>
             <input
               id="qr-label"
               ref={labelRef}
-              className={`create-input${label === '' && error ? ' error' : ''}`}
+              className="create-input"
               type="text"
               placeholder="e.g. Company Website"
               value={label}
@@ -129,7 +133,7 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
             </label>
             <input
               id="qr-content"
-              className={`create-input${content === '' && error ? ' error' : ''}`}
+              className="create-input"
               type={type === 'URL' ? 'url' : 'text'}
               placeholder={type === 'URL' ? 'https://example.com' : 'Enter text content…'}
               value={content}
@@ -142,21 +146,21 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
           </div>
 
           {error && <p className="create-err">{error}</p>}
-        </form>
+          </div>
 
-        <div className="create-footer">
-          <button className="create-cancel" type="button" onClick={onClose}>
-            Cancel
-          </button>
-          <button
-            className="create-submit"
-            type="submit"
-            disabled={submitting || !label.trim() || !content.trim()}
-            onClick={handleSubmit}
-          >
-            {submitting ? 'Creating…' : 'Create QR Code'}
-          </button>
-        </div>
+          <div className="create-footer">
+            <button className="create-cancel" type="button" onClick={onClose}>
+              Cancel
+            </button>
+            <button
+              className="create-submit"
+              type="submit"
+              disabled={submitting || !label.trim() || !content.trim()}
+            >
+              {submitting ? 'Creating…' : 'Create QR Code'}
+            </button>
+          </div>
+        </form>
       </aside>
     </>
   );
