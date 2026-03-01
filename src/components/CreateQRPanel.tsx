@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import { createClient, type components } from '@libre-net-pe/qrapid-sdk';
+import { type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
 import type { QRRecord, QRType } from '@/types';
+import { createQRapidClient } from '@/lib/qrapidClient';
 
 interface Props {
   onClose: () => void;
@@ -27,7 +28,7 @@ async function postQRCode(
   body: { label: string; content: string; type: QRType },
 ): Promise<{ data: ApiQRCode | undefined; error: unknown }> {
   // The SDK dist does not bundle schema types; cast is required to call POST.
-  const client = createClient({ token }) as { POST: (path: string, opts: { body: unknown }) => Promise<{ data: ApiQRCode | undefined; error: unknown }> };
+  const client = createQRapidClient(token) as { POST: (path: string, opts: { body: unknown }) => Promise<{ data: ApiQRCode | undefined; error: unknown }> };
   return client.POST('/qr-codes', { body });
 }
 
