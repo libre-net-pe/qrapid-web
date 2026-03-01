@@ -1,7 +1,14 @@
 import { useAuth } from '@/contexts/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
+import type { Folder } from '@/types';
 
-export function Sidebar() {
+interface SidebarProps {
+  folders: Folder[];
+  folderFilter: string;
+  onFolderChange: (name: string) => void;
+}
+
+export function Sidebar({ folders, folderFilter, onFolderChange }: SidebarProps) {
   const { logout } = useAuth();
   const { profile } = useCurrentUser();
 
@@ -61,6 +68,20 @@ export function Sidebar() {
           </svg>
           <span className="nav-txt dim">Folders</span>
         </div>
+        {folders.length > 0 && (
+          <div className="sb-folders">
+            {folders.map(f => (
+              <button
+                key={f.id}
+                className={`sb-folder-item${folderFilter === f.name ? ' active' : ''}`}
+                onClick={() => onFolderChange(folderFilter === f.name ? 'All folders' : f.name)}
+              >
+                <span className="sb-folder-name">{f.name}</span>
+                <span className="sb-folder-count">{f.codeCount}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <div className="nav-item">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(90,45,20,0.35)" strokeWidth="1.5">
             <rect x="1" y="1" width="12" height="12" rx="1.5"/>

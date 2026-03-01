@@ -8,3 +8,10 @@ export interface QRRecord {
   date: `${number}-${number}-${number}`;
   score: number;
 }
+
+export interface Folder {
+  id: string;
+  name: string;
+  description?: string | null;
+  codeCount: number;
+}
