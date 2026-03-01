@@ -17,6 +17,7 @@ function mapFolder(f: ApiFolder): Folder {
 
 async function loadFolders(token: string): Promise<Folder[]> {
   const api = createQRapidClient(token);
+  // TODO: implement pagination — limit:100 will silently truncate users with >100 folders
   const res = await api.GET('/folders', { params: { query: { limit: 100 } } });
   if (res.error) {
     throw new Error('Failed to load folders');

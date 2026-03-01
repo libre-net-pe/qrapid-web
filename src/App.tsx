@@ -1,4 +1,4 @@
-import { useState, useMemo, type ChangeEvent } from 'react';
+import { useState, useMemo, useCallback, type ChangeEvent } from 'react';
 import type { QRRecord } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
@@ -48,6 +48,11 @@ export default function App() {
     setSelectedIndex(0);
   }
 
+  const handleSidebarFolderChange = useCallback((folderName: string) => {
+    setFolderFilter(folderName);
+    setSelectedIndex(0);
+  }, []);
+
   function handleCreated(record: QRRecord) {
     setAdditions(prev => [record, ...prev]);
     setSearchQuery('');
@@ -61,7 +66,7 @@ export default function App() {
       <Sidebar
         folders={folders}
         folderFilter={folderFilter}
-        onFolderChange={f => { setFolderFilter(f); setSelectedIndex(0); }}
+        onFolderChange={handleSidebarFolderChange}
       />
 
       <main className="main-col">
