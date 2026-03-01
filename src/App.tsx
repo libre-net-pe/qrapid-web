@@ -5,6 +5,7 @@ import { QRTable } from '@/components/QRTable';
 import { DetailPanel } from '@/components/DetailPanel';
 import { CreateQRPanel } from '@/components/CreateQRPanel';
 import { useQRCodes } from '@/hooks/useQRCodes';
+import { useFolders } from '@/hooks/useFolders';
 
 function avgScore(records: QRRecord[]): number {
   if (!records.length) return 0;
@@ -13,6 +14,7 @@ function avgScore(records: QRRecord[]): number {
 
 export default function App() {
   const { records: fetchedRecords, loading } = useQRCodes();
+  const { folders } = useFolders();
   const [additions, setAdditions] = useState<QRRecord[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -22,8 +24,8 @@ export default function App() {
   const records = useMemo(() => [...additions, ...fetchedRecords], [additions, fetchedRecords]);
 
   const allFolders = useMemo(
-    () => ['All folders', ...new Set(records.map(r => r.folder).filter(f => f !== '—'))],
-    [records],
+    () => ['All folders', ...folders.map(f => f.name)],
+    [folders],
   );
 
   const filtered = records.filter(r => {
@@ -56,7 +58,11 @@ export default function App() {
 
   return (
     <div className="wrap">
-      <Sidebar />
+      <Sidebar
+        folders={folders}
+        folderFilter={folderFilter}
+        onFolderChange={f => { setFolderFilter(f); setSelectedIndex(0); }}
+      />
 
       <main className="main-col">
         <div className="topbar">
