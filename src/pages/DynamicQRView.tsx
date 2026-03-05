@@ -1,9 +1,10 @@
-import React, { useState, useMemo, type ChangeEvent } from 'react';
+import React from 'react';
 import type { Folder } from '@/types';
 import { DynamicQRTable } from '@/components/DynamicQRTable';
 import { DynamicDetailPanel } from '@/components/DynamicDetailPanel';
 import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
 import { useDynamicQRCodes } from '@/hooks/useDynamicQRCodes';
+import { useRecordFilter } from '@/hooks/useRecordFilter';
 
 function DynamicEmptyIcon() {
   return (
@@ -27,36 +28,21 @@ interface DynamicQRViewProps {
 
 export function DynamicQRView({ folders }: DynamicQRViewProps) {
   const { records, loading, error } = useDynamicQRCodes();
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [folderFilter, setFolderFilter] = useState('All folders');
 
-  const allFolders = useMemo(
-    () => ['All folders', ...folders.map(f => f.name)],
-    [folders],
+  const {
+    searchQuery, folderFilter, allFolders,
+    filtered, safeIndex, selectedRecord,
+    setSelectedIndex, handleSearch, handleFolderChange,
+  } = useRecordFilter(
+    records,
+    (r, q) => {
+      const lq = q.toLowerCase();
+      return r.label.toLowerCase().includes(lq) ||
+             r.destinationUrl.toLowerCase().includes(lq) ||
+             r.shortUrl.toLowerCase().includes(lq);
+    },
+    folders,
   );
-
-  const filtered = records.filter(r => {
-    const matchSearch =
-      r.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.destinationUrl.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      r.shortUrl.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchFolder = folderFilter === 'All folders' || r.folder === folderFilter;
-    return matchSearch && matchFolder;
-  });
-
-  const safeIndex = Math.min(selectedIndex, Math.max(0, filtered.length - 1));
-  const selectedRecord = filtered[safeIndex] ?? null;
-
-  function handleSearch(e: ChangeEvent<HTMLInputElement>) {
-    setSearchQuery(e.target.value);
-    setSelectedIndex(0);
-  }
-
-  function handleFolderChange(e: ChangeEvent<HTMLSelectElement>) {
-    setFolderFilter(e.target.value);
-    setSelectedIndex(0);
-  }
 
   let content: React.ReactNode;
   if (error) {

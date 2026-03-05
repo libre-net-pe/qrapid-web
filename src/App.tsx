@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, type ChangeEvent } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import type { QRRecord, Folder } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
@@ -10,6 +10,7 @@ import { DynamicQRView } from '@/pages/DynamicQRView';
 import { QREmptyIcon } from '@/components/QREmptyIcon';
 import { useQRCodes } from '@/hooks/useQRCodes';
 import { useFolders } from '@/hooks/useFolders';
+import { useRecordFilter } from '@/hooks/useRecordFilter';
 
 function avgScore(records: QRRecord[]): number {
   if (!records.length) return 0;
@@ -19,43 +20,26 @@ function avgScore(records: QRRecord[]): number {
 function StaticQRContent({ folders }: { folders: Folder[] }) {
   const { records: fetchedRecords, loading, error } = useQRCodes();
   const [additions, setAdditions] = useState<QRRecord[]>([]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [folderFilter, setFolderFilter] = useState('All folders');
   const [showCreate, setShowCreate] = useState(false);
 
   const records = useMemo(() => [...additions, ...fetchedRecords], [additions, fetchedRecords]);
 
-  const allFolders = useMemo(
-    () => ['All folders', ...folders.map(f => f.name)],
-    [folders],
+  const {
+    searchQuery, folderFilter, allFolders,
+    filtered, safeIndex, selectedRecord,
+    setSelectedIndex, handleSearch, handleFolderChange, reset,
+  } = useRecordFilter(
+    records,
+    (r, q) => {
+      const lq = q.toLowerCase();
+      return r.label.toLowerCase().includes(lq) || r.content.toLowerCase().includes(lq);
+    },
+    folders,
   );
-
-  const filtered = records.filter(r => {
-    const matchSearch = r.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        r.content.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchFolder = folderFilter === 'All folders' || r.folder === folderFilter;
-    return matchSearch && matchFolder;
-  });
-
-  const safeIndex = Math.min(selectedIndex, Math.max(0, filtered.length - 1));
-  const selectedRecord = filtered[safeIndex] ?? null;
-
-  function handleSearch(e: ChangeEvent<HTMLInputElement>) {
-    setSearchQuery(e.target.value);
-    setSelectedIndex(0);
-  }
-
-  function handleFolderChange(e: ChangeEvent<HTMLSelectElement>) {
-    setFolderFilter(e.target.value);
-    setSelectedIndex(0);
-  }
 
   function handleCreated(record: QRRecord) {
     setAdditions(prev => [record, ...prev]);
-    setSearchQuery('');
-    setFolderFilter('All folders');
-    setSelectedIndex(0);
+    reset();
     setShowCreate(false);
   }
 

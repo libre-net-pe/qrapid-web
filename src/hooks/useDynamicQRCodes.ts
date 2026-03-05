@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
 import type { components } from '@libre-net-pe/qrapid-sdk';
 import type { DynamicQRRecord } from '@/types';
-import { useAuth } from '@/contexts/useAuth';
 import { createQRapidClient } from '@/lib/qrapidClient';
+import { useApiData } from './useApiData';
 
 type DynamicQrCode = components['schemas']['DynamicQrCode'];
 
@@ -26,46 +25,11 @@ function mapDynamicQrCode(qr: DynamicQrCode): DynamicQRRecord {
 async function loadDynamicRecords(token: string): Promise<DynamicQRRecord[]> {
   const api = createQRapidClient(token);
   const res = await api.GET('/dynamic-qr-codes', { params: { query: { limit: 100 } } });
-  if (res.error) {
-    throw new Error('Failed to load dynamic QR codes');
-  }
+  if (res.error) throw new Error('Failed to load dynamic QR codes');
   return (res.data?.data ?? []).map(mapDynamicQrCode);
 }
 
 export function useDynamicQRCodes() {
-  const { user } = useAuth();
-  const [records, setRecords] = useState<DynamicQRRecord[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!user) {
-      setRecords([]);
-      setLoading(false);
-      return;
-    }
-
-    let cancelled = false;
-    const currentUser = user;
-
-    async function fetchData() {
-      setLoading(true);
-      setError(null);
-      try {
-        const token = await currentUser.getIdToken();
-        const mapped = await loadDynamicRecords(token);
-        if (!cancelled) setRecords(mapped);
-      } catch (err) {
-        console.error('Failed to fetch dynamic QR codes:', err);
-        if (!cancelled) setError('Failed to load dynamic QR codes');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    fetchData();
-    return () => { cancelled = true; };
-  }, [user]);
-
+  const { data: records, loading, error } = useApiData(loadDynamicRecords, [] as DynamicQRRecord[]);
   return { records, loading, error };
 }
