@@ -1,9 +1,10 @@
-import { useState, useMemo, useCallback, type ChangeEvent } from 'react';
+import React, { useState, useMemo, useCallback, type ChangeEvent } from 'react';
 import type { QRRecord } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
 import { DetailPanel } from '@/components/DetailPanel';
 import { CreateQRPanel } from '@/components/CreateQRPanel';
+import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
 import { useQRCodes } from '@/hooks/useQRCodes';
 import { useFolders } from '@/hooks/useFolders';
 
@@ -13,7 +14,7 @@ function avgScore(records: QRRecord[]): number {
 }
 
 export default function App() {
-  const { records: fetchedRecords, loading } = useQRCodes();
+  const { records: fetchedRecords, loading, error } = useQRCodes();
   const { folders } = useFolders();
   const [additions, setAdditions] = useState<QRRecord[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -61,6 +62,30 @@ export default function App() {
     setShowCreate(false);
   }
 
+  let content: React.ReactNode;
+  if (error) {
+    content = (
+      <div className="error-state">
+        <AlertTriangleIcon />
+        <p className="error-state-title">{error}</p>
+        <p className="error-state-sub">The request failed. Check your connection and try again.</p>
+      </div>
+    );
+  } else if (loading) {
+    content = <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>;
+  } else {
+    content = (
+      <>
+        <QRTable
+          records={filtered}
+          selectedIndex={safeIndex}
+          onSelect={setSelectedIndex}
+        />
+        <DetailPanel record={selectedRecord} />
+      </>
+    );
+  }
+
   return (
     <div className="wrap">
       <Sidebar
@@ -99,18 +124,7 @@ export default function App() {
         </div>
 
         <div className="content">
-          {loading ? (
-            <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>
-          ) : (
-            <>
-              <QRTable
-                records={filtered}
-                selectedIndex={safeIndex}
-                onSelect={setSelectedIndex}
-              />
-              <DetailPanel record={selectedRecord} />
-            </>
-          )}
+          {content}
         </div>
       </main>
 
