@@ -152,9 +152,17 @@ nav.sb-nav { flex: 1; padding: 0 12px; }
   cursor: pointer;
   transition: background 0.12s;
   border-left: 2px solid transparent;
+  border-top: none; border-right: none; border-bottom: none;
   margin-bottom: 1px;
   position: relative;
+  width: 100%;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: inherit;
 }
+.nav-item svg { color: rgba(90,45,20,0.35); }
+.nav-item.on svg { color: var(--si); }
 .nav-item:hover { background: rgba(30,10,5,0.04); }
 .nav-item.on {
   background: var(--si-bg);
@@ -426,9 +434,14 @@ main.main-col { flex: 1; display: flex; flex-direction: column; overflow: hidden
   background: var(--row);
   border-bottom: 1px solid var(--div);
   border-left: 3px solid transparent;
+  border-top: none; border-right: none;
   cursor: pointer;
   align-items: center;
   transition: background 0.08s, border-left-color 0.08s;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
 }
 .tr:hover { background: var(--row-hv); }
 
@@ -676,7 +689,7 @@ aside.panel { animation: panelIn 0.22s ease both; }
 
 /* ─── QR SVG sizing ─── */
 /* QR thumbnail in table rows */
-.tbl-rows .tr > div:first-child svg { width: 24px; height: 24px; display: block; }
+.tbl-rows .tr > :first-child svg { width: 24px; height: 24px; display: block; }
 /* QR display in detail panel */
 .p-qr-zone svg { width: 156px; height: 156px; display: block; }
 
@@ -974,6 +987,59 @@ aside.panel { animation: panelIn 0.22s ease both; }
   transition: border-color 0.12s, background 0.12s;
 }
 .create-cancel:hover { border-color: var(--si); background: var(--si-bg); }
+
+/* ─── Dynamic QR table column overrides ─── */
+.col-hdr.dyn-col-hdr {
+  grid-template-columns: 40px 1fr 180px 80px 100px 60px 96px 36px;
+}
+.tr.dyn-tr {
+  grid-template-columns: 40px 1fr 180px 80px 100px 60px 96px 36px;
+}
+.tr-scans {
+  font-family: 'Fira Code', monospace;
+  font-size: 10.5px;
+  color: var(--t2);
+}
+
+/* Dynamic status badges */
+.badge-dyn-active { background: var(--si-bg); color: var(--si); }
+.badge-dyn-expired { background: var(--te-bg); color: var(--te); opacity: 0.75; }
+
+/* Dynamic detail panel — header meta row */
+.p-head-meta {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.p-head-folder {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: var(--t2);
+  opacity: 0.7;
+}
+
+/* btn-dl used as <a> link */
+.btn-dl-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Dynamic detail panel — scan count emphasis */
+.dyn-scan-count {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--t1);
+}
+
+/* Empty state icon wrapper */
+.empty-state-icon {
+  color: var(--t3);
+  margin-bottom: 4px;
+}
 
 /* Error / empty states */
 .error-state, .empty-state {
