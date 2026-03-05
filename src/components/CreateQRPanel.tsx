@@ -11,15 +11,29 @@ interface Props {
 
 type ApiQRCode = components['schemas']['QrCode'];
 
+const CONTENT_CONFIG = {
+  URL:  { label: 'URL',     inputType: 'url'  as const, placeholder: 'https://example.com',   hint: 'Must start with https://' },
+  Text: { label: 'Content', inputType: 'text' as const, placeholder: 'Enter text content…',   hint: '' },
+};
+
+function mapApiType(apiType: string | undefined, fallback: QRType): QRType {
+  if (apiType === 'url') return 'URL';
+  if (apiType === 'text') return 'Text';
+  return fallback;
+}
+
 function toRecord(data: ApiQRCode | null, label: string, content: string, type: QRType): QRRecord {
   const today = new Date().toISOString().slice(0, 10) as QRRecord['date'];
+  if (!data) {
+    return { label, content, type, folder: '—', date: today, score: 80 };
+  }
   return {
-    label: data?.label ?? label,
-    content: data?.content ?? content,
-    type: (data?.type === 'url' ? 'URL' : data?.type === 'text' ? 'Text' : type),
-    folder: data?.folder?.name ?? '—',
-    date: (data?.createdAt?.slice(0, 10) as QRRecord['date'] | undefined) ?? today,
-    score: data?.scannability?.score ?? 80,
+    label: data.label ?? label,
+    content: data.content,
+    type: mapApiType(data.type, type),
+    folder: data.folder?.name ?? '—',
+    date: data.createdAt.slice(0, 10) as QRRecord['date'],
+    score: data.scannability?.score ?? 80,
   };
 }
 
@@ -40,6 +54,7 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const labelRef = useRef<HTMLInputElement>(null);
+  const cfg = CONTENT_CONFIG[type];
 
   useEffect(() => {
     labelRef.current?.focus();
@@ -129,21 +144,17 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
           </div>
 
           <div className="create-field">
-            <label className="create-lbl" htmlFor="qr-content">
-              {type === 'URL' ? 'URL' : 'Content'}
-            </label>
+            <label className="create-lbl" htmlFor="qr-content">{cfg.label}</label>
             <input
               id="qr-content"
               className="create-input"
-              type={type === 'URL' ? 'url' : 'text'}
-              placeholder={type === 'URL' ? 'https://example.com' : 'Enter text content…'}
+              type={cfg.inputType}
+              placeholder={cfg.placeholder}
               value={content}
               onChange={(e: ChangeEvent<HTMLInputElement>) => setContent(e.target.value)}
               required
             />
-            {type === 'URL' && (
-              <span className="create-hint">Must start with https://</span>
-            )}
+            {cfg.hint && <span className="create-hint">{cfg.hint}</span>}
           </div>
 
           {error && <p className="create-err">{error}</p>}
