@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, type ChangeEvent } from 'react';
+import React, { useState, useMemo, useCallback, type ChangeEvent } from 'react';
 import type { QRRecord } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
@@ -62,6 +62,30 @@ export default function App() {
     setShowCreate(false);
   }
 
+  let content: React.ReactNode;
+  if (error) {
+    content = (
+      <div className="error-state">
+        <AlertTriangleIcon />
+        <p className="error-state-title">{error}</p>
+        <p className="error-state-sub">The request failed. Check your connection and try again.</p>
+      </div>
+    );
+  } else if (loading) {
+    content = <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>;
+  } else {
+    content = (
+      <>
+        <QRTable
+          records={filtered}
+          selectedIndex={safeIndex}
+          onSelect={setSelectedIndex}
+        />
+        <DetailPanel record={selectedRecord} />
+      </>
+    );
+  }
+
   return (
     <div className="wrap">
       <Sidebar
@@ -100,24 +124,7 @@ export default function App() {
         </div>
 
         <div className="content">
-          {error ? (
-            <div className="error-state">
-              <AlertTriangleIcon />
-              <p className="error-state-title">{error}</p>
-              <p className="error-state-sub">The request failed. Check your connection and try again.</p>
-            </div>
-          ) : loading ? (
-            <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>
-          ) : (
-            <>
-              <QRTable
-                records={filtered}
-                selectedIndex={safeIndex}
-                onSelect={setSelectedIndex}
-              />
-              <DetailPanel record={selectedRecord} />
-            </>
-          )}
+          {content}
         </div>
       </main>
 
