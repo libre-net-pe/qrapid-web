@@ -6,10 +6,11 @@ import type { Folder } from '@/types';
 interface SidebarProps {
   folders: Folder[];
   activeView: 'static' | 'dynamic';
-  onFolderChange: (name: string) => void;
+  staticCount?: number;
+  dynamicCount?: number;
 }
 
-export function Sidebar({ folders, activeView, onFolderChange }: SidebarProps) {
+export function Sidebar({ folders, activeView, staticCount, dynamicCount }: SidebarProps) {
   const { logout } = useAuth();
   const { profile } = useCurrentUser();
   const navigate = useNavigate();
@@ -58,7 +59,9 @@ export function Sidebar({ folders, activeView, onFolderChange }: SidebarProps) {
             <path d="M8.5 8.5h.01M11 8.5h.01M8.5 11h.01M11 11h.01" strokeWidth="1.8"/>
           </svg>
           <span className="nav-txt">QR Codes</span>
-          <span className={`nav-count${activeView !== 'static' ? ' dim' : ''}`}>5</span>
+          {staticCount !== undefined && (
+            <span className={`nav-count${activeView !== 'static' ? ' dim' : ''}`}>{staticCount}</span>
+          )}
         </div>
         <div
           className={`nav-item${activeView === 'dynamic' ? ' on' : ''}`}
@@ -68,7 +71,9 @@ export function Sidebar({ folders, activeView, onFolderChange }: SidebarProps) {
             <path d="M2 2v4h.4A6 6 0 0112.2 7.2m0 0H9.5m2.7 0 .5-1.5M12 12v-4h-.4A6 6 0 011.8 6.8m0 0H4.5m-2.7 0-.5 1.5"/>
           </svg>
           <span className={`nav-txt${activeView !== 'dynamic' ? ' dim' : ''}`}>Dynamic QR</span>
-          <span className={`nav-count${activeView !== 'dynamic' ? ' dim' : ''}`}>3</span>
+          {dynamicCount !== undefined && (
+            <span className={`nav-count${activeView !== 'dynamic' ? ' dim' : ''}`}>{dynamicCount}</span>
+          )}
         </div>
         <div className="nav-item">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(90,45,20,0.35)" strokeWidth="1.5">
@@ -79,14 +84,10 @@ export function Sidebar({ folders, activeView, onFolderChange }: SidebarProps) {
         {folders.length > 0 && (
           <div className="sb-folders">
             {folders.map(f => (
-              <button
-                key={f.id}
-                className="sb-folder-item"
-                onClick={() => onFolderChange(f.name)}
-              >
+              <div key={f.id} className="sb-folder-item">
                 <span className="sb-folder-name">{f.name}</span>
                 <span className="sb-folder-count">{f.codeCount}</span>
-              </button>
+              </div>
             ))}
           </div>
         )}

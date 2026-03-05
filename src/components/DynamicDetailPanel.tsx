@@ -5,6 +5,10 @@ interface DynamicDetailPanelProps {
   record: DynamicQRRecord | null;
 }
 
+function safeUrl(url: string): string {
+  return /^https?:\/\//.test(url) ? url : '#';
+}
+
 export function DynamicDetailPanel({ record }: DynamicDetailPanelProps) {
   if (!record) return null;
 
@@ -13,11 +17,9 @@ export function DynamicDetailPanel({ record }: DynamicDetailPanelProps) {
       <div className="p-head">
         <div className="p-eyebrow">Dynamic QR</div>
         <div className="p-title">{record.label}</div>
-        <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div className="p-head-meta">
           <span className={`badge badge-dyn-${record.status}`}>{record.status}</span>
-          <span style={{ fontFamily: "'Fira Code', monospace", fontSize: 10, color: 'var(--t2)', opacity: 0.7 }}>
-            {record.folder}
-          </span>
+          <span className="p-head-folder">{record.folder}</span>
         </div>
       </div>
 
@@ -65,7 +67,7 @@ export function DynamicDetailPanel({ record }: DynamicDetailPanelProps) {
 
       <div className="p-acts">
         <button className="btn-edit">Edit Destination</button>
-        <a className="btn-dl" href={record.downloadUrl} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <a className="btn-dl btn-dl-link" href={safeUrl(record.downloadUrl)} target="_blank" rel="noreferrer">
           Download
         </a>
       </div>

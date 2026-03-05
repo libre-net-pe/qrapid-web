@@ -18,7 +18,7 @@ function mapDynamicQrCode(qr: DynamicQrCode): DynamicQRRecord {
     lastScannedAt: qr.lastScannedAt ?? null,
     expiresAt: qr.expiresAt ?? null,
     folder: qr.folder?.name ?? '—',
-    date: qr.createdAt.slice(0, 10),
+    date: qr.createdAt.slice(0, 10) as `${number}-${number}-${number}`,
   };
 }
 

@@ -65,7 +65,7 @@ export function DynamicQRView({ folders }: DynamicQRViewProps) {
         <p className="error-state-sub">
           Create your first dynamic QR code to track scans and update destinations without reprinting.
         </p>
-        <button className="btn-new">+ Create Dynamic Code</button>
+        <button className="btn-new" disabled title="Create dynamic QR — coming soon">+ Create Dynamic Code</button>
       </div>
     );
   } else {
@@ -106,7 +106,7 @@ export function DynamicQRView({ folders }: DynamicQRViewProps) {
           >
             {allFolders.map(f => <option key={f}>{f}</option>)}
           </select>
-          <button className="btn-new">+ New Code</button>
+          <button className="btn-new" disabled title="Create dynamic QR — coming soon">+ New Code</button>
         </div>
       </div>
 

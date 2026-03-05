@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import type { QRRecord, Folder } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
@@ -126,16 +126,11 @@ export default function App() {
   const location = useLocation();
   const isDynamic = location.pathname.startsWith('/dynamic');
 
-  const handleSidebarFolderChange = useCallback(() => {
-    // folder filtering is handled within each view
-  }, []);
-
   return (
     <div className="wrap">
       <Sidebar
         folders={folders}
         activeView={isDynamic ? 'dynamic' : 'static'}
-        onFolderChange={handleSidebarFolderChange}
       />
       {isDynamic
         ? <DynamicQRView folders={folders} />

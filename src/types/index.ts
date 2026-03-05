@@ -21,7 +21,7 @@ export interface DynamicQRRecord {
   lastScannedAt: string | null;
   expiresAt: string | null;
   folder: string;
-  date: string;
+  date: `${number}-${number}-${number}`;
 }
 
 export interface Folder {

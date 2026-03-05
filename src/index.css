@@ -976,11 +976,11 @@ aside.panel { animation: panelIn 0.22s ease both; }
 .create-cancel:hover { border-color: var(--si); background: var(--si-bg); }
 
 /* ─── Dynamic QR table column overrides ─── */
-.dyn-col-hdr {
-  grid-template-columns: 40px 1fr 180px 80px 100px 60px 96px 36px !important;
+.col-hdr.dyn-col-hdr {
+  grid-template-columns: 40px 1fr 180px 80px 100px 60px 96px 36px;
 }
-.dyn-tr {
-  grid-template-columns: 40px 1fr 180px 80px 100px 60px 96px 36px !important;
+.tr.dyn-tr {
+  grid-template-columns: 40px 1fr 180px 80px 100px 60px 96px 36px;
 }
 .tr-scans {
   font-family: 'Fira Code', monospace;
@@ -991,6 +991,28 @@ aside.panel { animation: panelIn 0.22s ease both; }
 /* Dynamic status badges */
 .badge-dyn-active { background: var(--si-bg); color: var(--si); }
 .badge-dyn-expired { background: var(--te-bg); color: var(--te); opacity: 0.75; }
+
+/* Dynamic detail panel — header meta row */
+.p-head-meta {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.p-head-folder {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: var(--t2);
+  opacity: 0.7;
+}
+
+/* btn-dl used as <a> link */
+.btn-dl-link {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
 /* Dynamic detail panel — scan count emphasis */
 .dyn-scan-count {
