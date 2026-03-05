@@ -23,10 +23,10 @@ function DynamicEmptyIcon() {
 }
 
 interface DynamicQRViewProps {
-  folders: Folder[];
+  readonly folders: Folder[];
 }
 
-export function DynamicQRView({ folders }: DynamicQRViewProps) {
+export function DynamicQRView({ folders }: Readonly<DynamicQRViewProps>) {
   const { records, loading, error } = useDynamicQRCodes();
 
   const {

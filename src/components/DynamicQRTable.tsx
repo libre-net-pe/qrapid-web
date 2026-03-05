@@ -2,12 +2,12 @@ import type { DynamicQRRecord } from '@/types';
 import { makeQR } from '@/utils/makeQR';
 
 interface DynamicQRTableProps {
-  records: DynamicQRRecord[];
-  selectedIndex: number;
-  onSelect: (index: number) => void;
+  readonly records: DynamicQRRecord[];
+  readonly selectedIndex: number;
+  readonly onSelect: (index: number) => void;
 }
 
-export function DynamicQRTable({ records, selectedIndex, onSelect }: DynamicQRTableProps) {
+export function DynamicQRTable({ records, selectedIndex, onSelect }: Readonly<DynamicQRTableProps>) {
   return (
     <div className="tbl-area">
       <div className="col-hdr dyn-col-hdr">
@@ -22,11 +22,12 @@ export function DynamicQRTable({ records, selectedIndex, onSelect }: DynamicQRTa
       </div>
       <div className="tbl-rows">
         {records.map((r, i) => (
-          <div
+          <button
             key={r.id}
             className={`tr dyn-tr${i === selectedIndex ? ' sel' : ''}`}
             style={{ animationDelay: `${i * 40}ms` }}
             onClick={() => onSelect(i)}
+            type="button"
           >
             <div
               dangerouslySetInnerHTML={{ __html: makeQR(r.shortUrl) }}
@@ -41,7 +42,7 @@ export function DynamicQRTable({ records, selectedIndex, onSelect }: DynamicQRTa
             <div className="tr-scans">{r.scanCount.toLocaleString()}</div>
             <div className="tr-date">{r.date}</div>
             <div className="tr-menu">&#x22EF;</div>
-          </div>
+          </button>
         ))}
       </div>
     </div>

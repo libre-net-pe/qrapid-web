@@ -3,12 +3,12 @@ import { makeQR } from '@/utils/makeQR';
 import { getBadgeClass } from '@/utils/badges';
 
 interface QRTableProps {
-  records: QRRecord[];
-  selectedIndex: number;
-  onSelect: (index: number) => void;
+  readonly records: QRRecord[];
+  readonly selectedIndex: number;
+  readonly onSelect: (index: number) => void;
 }
 
-export function QRTable({ records, selectedIndex, onSelect }: QRTableProps) {
+export function QRTable({ records, selectedIndex, onSelect }: Readonly<QRTableProps>) {
   return (
     <div className="tbl-area">
       <div className="col-hdr">
@@ -22,8 +22,9 @@ export function QRTable({ records, selectedIndex, onSelect }: QRTableProps) {
       </div>
       <div className="tbl-rows">
         {records.map((r, i) => (
-          <div
+          <button
             key={r.label}
+            type="button"
             className={`tr${i === selectedIndex ? ' sel' : ''}`}
             style={{ animationDelay: `${i * 40}ms` }}
             onClick={() => onSelect(i)}
@@ -42,7 +43,7 @@ export function QRTable({ records, selectedIndex, onSelect }: QRTableProps) {
             <div className="tr-folder">{r.folder}</div>
             <div className="tr-date">{r.date}</div>
             <div className="tr-menu">&#x22EF;</div>
-          </div>
+          </button>
         ))}
       </div>
     </div>

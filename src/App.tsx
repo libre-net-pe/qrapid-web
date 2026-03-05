@@ -17,7 +17,7 @@ function avgScore(records: QRRecord[]): number {
   return Math.round(records.reduce((sum, r) => sum + r.score, 0) / records.length);
 }
 
-function StaticQRContent({ folders }: { folders: Folder[] }) {
+function StaticQRContent({ folders }: Readonly<{ folders: Folder[] }>) {
   const { records: fetchedRecords, loading, error } = useQRCodes();
   const [additions, setAdditions] = useState<QRRecord[]>([]);
   const [showCreate, setShowCreate] = useState(false);

@@ -2,14 +2,14 @@ import type { DynamicQRRecord } from '@/types';
 import { makeQR } from '@/utils/makeQR';
 
 interface DynamicDetailPanelProps {
-  record: DynamicQRRecord | null;
+  readonly record: DynamicQRRecord | null;
 }
 
 function safeUrl(url: string): string {
   return /^https?:\/\//.test(url) ? url : '#';
 }
 
-export function DynamicDetailPanel({ record }: DynamicDetailPanelProps) {
+export function DynamicDetailPanel({ record }: Readonly<DynamicDetailPanelProps>) {
   if (!record) return null;
 
   return (

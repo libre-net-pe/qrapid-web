@@ -5,33 +5,33 @@ import { useCurrentUser } from '@/hooks/useCurrentUser';
 import type { Folder } from '@/types';
 
 interface NavItemProps {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-  count?: number;
-  children: React.ReactNode;
+  readonly active: boolean;
+  readonly onClick: () => void;
+  readonly label: string;
+  readonly count?: number;
+  readonly children: React.ReactNode;
 }
 
-function NavItem({ active, onClick, label, count, children }: NavItemProps) {
+function NavItem({ active, onClick, label, count, children }: Readonly<NavItemProps>) {
   return (
-    <div className={`nav-item${active ? ' on' : ''}`} onClick={onClick}>
+    <button type="button" className={`nav-item${active ? ' on' : ''}`} onClick={onClick}>
       {children}
       <span className={`nav-txt${active ? '' : ' dim'}`}>{label}</span>
       {count !== undefined && (
         <span className={`nav-count${active ? '' : ' dim'}`}>{count}</span>
       )}
-    </div>
+    </button>
   );
 }
 
 interface SidebarProps {
-  folders: Folder[];
-  activeView: 'static' | 'dynamic';
-  staticCount?: number;
-  dynamicCount?: number;
+  readonly folders: Folder[];
+  readonly activeView: 'static' | 'dynamic';
+  readonly staticCount?: number;
+  readonly dynamicCount?: number;
 }
 
-export function Sidebar({ folders, activeView, staticCount, dynamicCount }: SidebarProps) {
+export function Sidebar({ folders, activeView, staticCount, dynamicCount }: Readonly<SidebarProps>) {
   const { logout } = useAuth();
   const { profile } = useCurrentUser();
   const navigate = useNavigate();
