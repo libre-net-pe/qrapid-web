@@ -7,6 +7,7 @@ import { DetailPanel } from '@/components/DetailPanel';
 import { CreateQRPanel } from '@/components/CreateQRPanel';
 import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
 import { DynamicQRView } from '@/pages/DynamicQRView';
+import { QREmptyIcon } from '@/components/QREmptyIcon';
 import { useQRCodes } from '@/hooks/useQRCodes';
 import { useFolders } from '@/hooks/useFolders';
 
@@ -69,6 +70,14 @@ function StaticQRContent({ folders }: { folders: Folder[] }) {
     );
   } else if (loading) {
     content = <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>;
+  } else if (filtered.length === 0) {
+    content = (
+      <div className="empty-state">
+        <QREmptyIcon />
+        <p className="error-state-title">No QR codes found</p>
+        <p className="error-state-sub">Create your first code using the + New Code button.</p>
+      </div>
+    );
   } else {
     content = (
       <>

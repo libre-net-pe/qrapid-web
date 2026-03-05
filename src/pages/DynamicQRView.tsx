@@ -75,8 +75,8 @@ export function DynamicQRView({ folders }: DynamicQRViewProps) {
         <div className="empty-state-icon">
           <DynamicEmptyIcon />
         </div>
-        <p className="empty-state-title">No dynamic QR codes yet</p>
-        <p className="empty-state-sub">
+        <p className="error-state-title">No dynamic QR codes yet</p>
+        <p className="error-state-sub">
           Create your first dynamic QR code to track scans and update destinations without reprinting.
         </p>
         <button className="btn-new">+ Create Dynamic Code</button>
