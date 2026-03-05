@@ -1,16 +1,18 @@
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import type { Folder } from '@/types';
 
 interface SidebarProps {
   folders: Folder[];
-  folderFilter: string;
+  activeView: 'static' | 'dynamic';
   onFolderChange: (name: string) => void;
 }
 
-export function Sidebar({ folders, folderFilter, onFolderChange }: SidebarProps) {
+export function Sidebar({ folders, activeView, onFolderChange }: SidebarProps) {
   const { logout } = useAuth();
   const { profile } = useCurrentUser();
+  const navigate = useNavigate();
 
   const displayName = profile?.displayName ?? '…';
   const email = profile?.email ?? '';
@@ -47,20 +49,26 @@ export function Sidebar({ folders, folderFilter, onFolderChange }: SidebarProps)
       <div className="sb-rule2" />
 
       <nav className="sb-nav">
-        <div className="nav-item on">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="#C45B30" strokeWidth="1.5">
+        <div
+          className={`nav-item${activeView === 'static' ? ' on' : ''}`}
+          onClick={() => navigate('/')}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={activeView === 'static' ? '#C45B30' : 'rgba(90,45,20,0.35)'} strokeWidth="1.5">
             <rect x="1" y="1" width="5" height="5"/><rect x="8" y="1" width="5" height="5"/><rect x="1" y="8" width="5" height="5"/>
             <path d="M8.5 8.5h.01M11 8.5h.01M8.5 11h.01M11 11h.01" strokeWidth="1.8"/>
           </svg>
           <span className="nav-txt">QR Codes</span>
-          <span className="nav-count">5</span>
+          <span className={`nav-count${activeView !== 'static' ? ' dim' : ''}`}>5</span>
         </div>
-        <div className="nav-item">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(90,45,20,0.35)" strokeWidth="1.5">
+        <div
+          className={`nav-item${activeView === 'dynamic' ? ' on' : ''}`}
+          onClick={() => navigate('/dynamic')}
+        >
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={activeView === 'dynamic' ? '#C45B30' : 'rgba(90,45,20,0.35)'} strokeWidth="1.5">
             <path d="M2 2v4h.4A6 6 0 0112.2 7.2m0 0H9.5m2.7 0 .5-1.5M12 12v-4h-.4A6 6 0 011.8 6.8m0 0H4.5m-2.7 0-.5 1.5"/>
           </svg>
-          <span className="nav-txt dim">Dynamic QR</span>
-          <span className="nav-count dim">3</span>
+          <span className={`nav-txt${activeView !== 'dynamic' ? ' dim' : ''}`}>Dynamic QR</span>
+          <span className={`nav-count${activeView !== 'dynamic' ? ' dim' : ''}`}>3</span>
         </div>
         <div className="nav-item">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(90,45,20,0.35)" strokeWidth="1.5">
@@ -73,8 +81,8 @@ export function Sidebar({ folders, folderFilter, onFolderChange }: SidebarProps)
             {folders.map(f => (
               <button
                 key={f.id}
-                className={`sb-folder-item${folderFilter === f.name ? ' active' : ''}`}
-                onClick={() => onFolderChange(folderFilter === f.name ? 'All folders' : f.name)}
+                className="sb-folder-item"
+                onClick={() => onFolderChange(f.name)}
               >
                 <span className="sb-folder-name">{f.name}</span>
                 <span className="sb-folder-count">{f.codeCount}</span>

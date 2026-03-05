@@ -9,6 +9,21 @@ export interface QRRecord {
   score: number;
 }
 
+export interface DynamicQRRecord {
+  id: string;
+  label: string;
+  destinationUrl: string;
+  shortUrl: string;
+  slug: string;
+  status: 'active' | 'expired';
+  downloadUrl: string;
+  scanCount: number;
+  lastScannedAt: string | null;
+  expiresAt: string | null;
+  folder: string;
+  date: string;
+}
+
 export interface Folder {
   id: string;
   name: string;

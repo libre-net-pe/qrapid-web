@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useCallback, type ChangeEvent } from 'react';
-import type { QRRecord } from '@/types';
+import { useLocation } from 'react-router-dom';
+import type { QRRecord, Folder } from '@/types';
 import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
 import { DetailPanel } from '@/components/DetailPanel';
 import { CreateQRPanel } from '@/components/CreateQRPanel';
 import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
+import { DynamicQRView } from '@/pages/DynamicQRView';
 import { useQRCodes } from '@/hooks/useQRCodes';
 import { useFolders } from '@/hooks/useFolders';
 
@@ -13,9 +15,8 @@ function avgScore(records: QRRecord[]): number {
   return Math.round(records.reduce((sum, r) => sum + r.score, 0) / records.length);
 }
 
-export default function App() {
+function StaticQRContent({ folders }: { folders: Folder[] }) {
   const { records: fetchedRecords, loading, error } = useQRCodes();
-  const { folders } = useFolders();
   const [additions, setAdditions] = useState<QRRecord[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
@@ -48,11 +49,6 @@ export default function App() {
     setFolderFilter(e.target.value);
     setSelectedIndex(0);
   }
-
-  const handleSidebarFolderChange = useCallback((folderName: string) => {
-    setFolderFilter(folderName);
-    setSelectedIndex(0);
-  }, []);
 
   function handleCreated(record: QRRecord) {
     setAdditions(prev => [record, ...prev]);
@@ -87,13 +83,7 @@ export default function App() {
   }
 
   return (
-    <div className="wrap">
-      <Sidebar
-        folders={folders}
-        folderFilter={folderFilter}
-        onFolderChange={handleSidebarFolderChange}
-      />
-
+    <>
       <main className="main-col">
         <div className="topbar">
           <div>
@@ -134,6 +124,30 @@ export default function App() {
           onCreated={handleCreated}
         />
       )}
+    </>
+  );
+}
+
+export default function App() {
+  const { folders } = useFolders();
+  const location = useLocation();
+  const isDynamic = location.pathname.startsWith('/dynamic');
+
+  const handleSidebarFolderChange = useCallback(() => {
+    // folder filtering is handled within each view
+  }, []);
+
+  return (
+    <div className="wrap">
+      <Sidebar
+        folders={folders}
+        activeView={isDynamic ? 'dynamic' : 'static'}
+        onFolderChange={handleSidebarFolderChange}
+      />
+      {isDynamic
+        ? <DynamicQRView folders={folders} />
+        : <StaticQRContent folders={folders} />
+      }
     </div>
   );
 }
