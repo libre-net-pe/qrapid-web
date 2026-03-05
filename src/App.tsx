@@ -13,7 +13,7 @@ function avgScore(records: QRRecord[]): number {
 }
 
 export default function App() {
-  const { records: fetchedRecords, loading } = useQRCodes();
+  const { records: fetchedRecords, loading, error } = useQRCodes();
   const { folders } = useFolders();
   const [additions, setAdditions] = useState<QRRecord[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -99,7 +99,17 @@ export default function App() {
         </div>
 
         <div className="content">
-          {loading ? (
+          {error ? (
+            <div className="error-state">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+              <p className="error-state-title">Unable to load QR codes</p>
+              <p className="error-state-sub">The request failed. Check your connection and try again.</p>
+            </div>
+          ) : loading ? (
             <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>
           ) : (
             <>

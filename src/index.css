@@ -971,3 +971,27 @@ aside.panel { animation: panelIn 0.22s ease both; }
   transition: border-color 0.12s, background 0.12s;
 }
 .create-cancel:hover { border-color: var(--si); background: var(--si-bg); }
+
+/* Error state */
+.error-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--t2);
+}
+.error-state svg { color: var(--si); }
+.error-state-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--t1);
+}
+.error-state-sub {
+  font-family: 'Fira Code', monospace;
+  font-size: 11px;
+  color: var(--t2);
+  opacity: 0.6;
+}
