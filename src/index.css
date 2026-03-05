@@ -59,6 +59,8 @@ Palette — every value deliberately chosen:
   --si-bg:    #FAEEE8;   /* pale sienna */
   --te-bg:    #F5E8E0;   /* pale terracotta */
   --te:       #B85C38;   /* terracotta */
+  --z-overlay: 100;      /* modal overlay */
+  --z-drawer:  101;      /* slide-in drawer (above overlay) */
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -776,7 +778,7 @@ aside.panel { animation: panelIn 0.22s ease both; }
 .create-overlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  z-index: var(--z-overlay);
   background: rgba(26,10,5,0.35);
   animation: overlayIn 0.2s ease both;
 }
@@ -787,6 +789,7 @@ aside.panel { animation: panelIn 0.22s ease both; }
   top: 0;
   bottom: 0;
   width: 420px;
+  z-index: var(--z-drawer);
   background: var(--panel);
   border-left: 1px solid var(--div);
   box-shadow: -4px 0 24px rgba(26,10,5,0.12);
