@@ -1,7 +1,28 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/useAuth';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import type { Folder } from '@/types';
+
+interface NavItemProps {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+  count?: number;
+  children: React.ReactNode;
+}
+
+function NavItem({ active, onClick, label, count, children }: NavItemProps) {
+  return (
+    <div className={`nav-item${active ? ' on' : ''}`} onClick={onClick}>
+      {children}
+      <span className={`nav-txt${active ? '' : ' dim'}`}>{label}</span>
+      {count !== undefined && (
+        <span className={`nav-count${active ? '' : ' dim'}`}>{count}</span>
+      )}
+    </div>
+  );
+}
 
 interface SidebarProps {
   folders: Folder[];
@@ -20,12 +41,7 @@ export function Sidebar({ folders, activeView, staticCount, dynamicCount }: Side
   const plan = profile?.plan ?? null;
   const initials = displayName === '…'
     ? '…'
-    : displayName
-        .split(' ')
-        .map(n => n[0])
-        .slice(0, 2)
-        .join('')
-        .toUpperCase();
+    : displayName.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
 
   return (
     <aside className="sb">
@@ -50,37 +66,26 @@ export function Sidebar({ folders, activeView, staticCount, dynamicCount }: Side
       <div className="sb-rule2" />
 
       <nav className="sb-nav">
-        <div
-          className={`nav-item${activeView === 'static' ? ' on' : ''}`}
-          onClick={() => navigate('/')}
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={activeView === 'static' ? '#C45B30' : 'rgba(90,45,20,0.35)'} strokeWidth="1.5">
+        <NavItem active={activeView === 'static'} onClick={() => navigate('/')} label="QR Codes" count={staticCount}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
             <rect x="1" y="1" width="5" height="5"/><rect x="8" y="1" width="5" height="5"/><rect x="1" y="8" width="5" height="5"/>
             <path d="M8.5 8.5h.01M11 8.5h.01M8.5 11h.01M11 11h.01" strokeWidth="1.8"/>
           </svg>
-          <span className="nav-txt">QR Codes</span>
-          {staticCount !== undefined && (
-            <span className={`nav-count${activeView !== 'static' ? ' dim' : ''}`}>{staticCount}</span>
-          )}
-        </div>
-        <div
-          className={`nav-item${activeView === 'dynamic' ? ' on' : ''}`}
-          onClick={() => navigate('/dynamic')}
-        >
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={activeView === 'dynamic' ? '#C45B30' : 'rgba(90,45,20,0.35)'} strokeWidth="1.5">
+        </NavItem>
+
+        <NavItem active={activeView === 'dynamic'} onClick={() => navigate('/dynamic')} label="Dynamic QR" count={dynamicCount}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M2 2v4h.4A6 6 0 0112.2 7.2m0 0H9.5m2.7 0 .5-1.5M12 12v-4h-.4A6 6 0 011.8 6.8m0 0H4.5m-2.7 0-.5 1.5"/>
           </svg>
-          <span className={`nav-txt${activeView !== 'dynamic' ? ' dim' : ''}`}>Dynamic QR</span>
-          {dynamicCount !== undefined && (
-            <span className={`nav-count${activeView !== 'dynamic' ? ' dim' : ''}`}>{dynamicCount}</span>
-          )}
-        </div>
+        </NavItem>
+
         <div className="nav-item">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(90,45,20,0.35)" strokeWidth="1.5">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M1 4.5A1.5 1.5 0 012.5 3H5.5l1 1H12a1.5 1.5 0 011.5 1.5V11A1.5 1.5 0 0112 12.5H2A1.5 1.5 0 01.5 11V4.5z"/>
           </svg>
           <span className="nav-txt dim">Folders</span>
         </div>
+
         {folders.length > 0 && (
           <div className="sb-folders">
             {folders.map(f => (
@@ -91,8 +96,9 @@ export function Sidebar({ folders, activeView, staticCount, dynamicCount }: Side
             ))}
           </div>
         )}
+
         <div className="nav-item">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="rgba(90,45,20,0.35)" strokeWidth="1.5">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
             <rect x="1" y="1" width="12" height="12" rx="1.5"/>
             <circle cx="4.5" cy="4.5" r="1"/>
             <path d="M1 10l3.5-3.5 2.5 2.5 1.5-1.5L13 11"/>

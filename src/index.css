@@ -155,6 +155,8 @@ nav.sb-nav { flex: 1; padding: 0 12px; }
   margin-bottom: 1px;
   position: relative;
 }
+.nav-item svg { color: rgba(90,45,20,0.35); }
+.nav-item.on svg { color: var(--si); }
 .nav-item:hover { background: rgba(30,10,5,0.04); }
 .nav-item.on {
   background: var(--si-bg);

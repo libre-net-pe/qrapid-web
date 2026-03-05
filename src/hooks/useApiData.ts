@@ -1,20 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/contexts/useAuth';
 
 /**
  * Generic hook for authenticated API fetches.
- * `loader` must be a stable (module-level) function — it is not included in
- * the effect deps to avoid re-fetching on every render.
+ * `loader` and `initial` are captured via refs so the effect
+ * depends only on `user`, avoiding stale-closure issues while
+ * keeping callers free from useMemo/useCallback boilerplate.
  */
 export function useApiData<T>(loader: (token: string) => Promise<T>, initial: T) {
   const { user } = useAuth();
+  const loaderRef = useRef(loader);
+  const initialRef = useRef(initial);
   const [data, setData] = useState<T>(initial);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) {
-      setData(initial);
+      setData(initialRef.current);
       setLoading(false);
       return;
     }
@@ -27,7 +30,7 @@ export function useApiData<T>(loader: (token: string) => Promise<T>, initial: T)
       setError(null);
       try {
         const token = await currentUser.getIdToken();
-        const result = await loader(token);
+        const result = await loaderRef.current(token);
         if (!cancelled) setData(result);
       } catch (err) {
         console.error(err);
@@ -39,8 +42,6 @@ export function useApiData<T>(loader: (token: string) => Promise<T>, initial: T)
 
     fetchData();
     return () => { cancelled = true; };
-  // loader is a module-level stable function — intentionally omitted from deps
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   return { data, loading, error };
