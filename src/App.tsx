@@ -73,6 +73,22 @@ export default function App() {
     );
   } else if (loading) {
     content = <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>;
+  } else if (filtered.length === 0) {
+    content = (
+      <div className="error-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="3" y="3" width="7" height="7" rx="1"/>
+          <rect x="14" y="3" width="7" height="7" rx="1"/>
+          <rect x="3" y="14" width="7" height="7" rx="1"/>
+          <rect x="14" y="14" width="3" height="3" rx="0.5"/>
+          <line x1="18" y1="14" x2="21" y2="14"/>
+          <line x1="21" y1="14" x2="21" y2="17"/>
+          <line x1="18" y1="21" x2="21" y2="21"/>
+        </svg>
+        <p className="error-state-title">No QR codes found</p>
+        <p className="error-state-sub">Create your first code using the + New Code button.</p>
+      </div>
+    );
   } else {
     content = (
       <>
