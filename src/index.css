@@ -787,6 +787,7 @@ aside.panel { animation: panelIn 0.22s ease both; }
   top: 0;
   bottom: 0;
   width: 420px;
+  z-index: 101;
   background: var(--panel);
   border-left: 1px solid var(--div);
   box-shadow: -4px 0 24px rgba(26,10,5,0.12);
