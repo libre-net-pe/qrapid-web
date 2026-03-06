@@ -1,8 +1,9 @@
-import React from 'react';
-import type { Folder } from '@/types';
+import React, { useMemo, useState } from 'react';
+import type { DynamicQRRecord, Folder } from '@/types';
 import { DynamicQRTable } from '@/components/DynamicQRTable';
 import { DynamicDetailPanel } from '@/components/DynamicDetailPanel';
 import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
+import { CreateDynamicQRPanel } from '@/components/CreateDynamicQRPanel';
 import { useDynamicQRCodes } from '@/hooks/useDynamicQRCodes';
 import { useRecordFilter } from '@/hooks/useRecordFilter';
 
@@ -28,13 +29,17 @@ interface DynamicQRViewProps {
 
 export function DynamicQRView({ folders }: Readonly<DynamicQRViewProps>) {
   const { records, loading, error } = useDynamicQRCodes();
+  const [additions, setAdditions] = useState<DynamicQRRecord[]>([]);
+  const [showCreate, setShowCreate] = useState(false);
+
+  const allRecords = useMemo(() => [...additions, ...records], [additions, records]);
 
   const {
     searchQuery, folderFilter, allFolders,
     filtered, safeIndex, selectedRecord,
     setSelectedIndex, handleSearch, handleFolderChange,
   } = useRecordFilter(
-    records,
+    allRecords,
     (r, q) => {
       const lq = q.toLowerCase();
       return r.label.toLowerCase().includes(lq) ||
@@ -65,7 +70,7 @@ export function DynamicQRView({ folders }: Readonly<DynamicQRViewProps>) {
         <p className="error-state-sub">
           Create your first dynamic QR code to track scans and update destinations without reprinting.
         </p>
-        <button className="btn-new" disabled title="Create dynamic QR — coming soon">+ Create Dynamic Code</button>
+        <button className="btn-new" onClick={() => setShowCreate(true)}>+ Create Dynamic Code</button>
       </div>
     );
   } else {
@@ -106,13 +111,20 @@ export function DynamicQRView({ folders }: Readonly<DynamicQRViewProps>) {
           >
             {allFolders.map(f => <option key={f}>{f}</option>)}
           </select>
-          <button className="btn-new" disabled title="Create dynamic QR — coming soon">+ New Code</button>
+          <button className="btn-new" onClick={() => setShowCreate(true)}>+ New Code</button>
         </div>
       </div>
 
       <div className="content">
         {content}
       </div>
+
+      {showCreate && (
+        <CreateDynamicQRPanel
+          onClose={() => setShowCreate(false)}
+          onCreated={(r) => { setAdditions(prev => [r, ...prev]); setShowCreate(false); }}
+        />
+      )}
     </main>
   );
 }
