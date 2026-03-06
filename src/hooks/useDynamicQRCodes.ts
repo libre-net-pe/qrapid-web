@@ -5,7 +5,7 @@ import { useApiData } from './useApiData';
 
 type DynamicQrCode = components['schemas']['DynamicQrCode'];
 
-function mapDynamicQrCode(qr: DynamicQrCode): DynamicQRRecord {
+export function mapDynamicQrCode(qr: DynamicQrCode): DynamicQRRecord {
   return {
     id: qr.id,
     label: qr.label ?? qr.slug,

@@ -3,6 +3,7 @@ import { type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
 import type { DynamicQRRecord } from '@/types';
 import { createQRapidClient } from '@/lib/qrapidClient';
+import { mapDynamicQrCode } from '@/hooks/useDynamicQRCodes';
 
 interface Props {
   onClose: () => void;
@@ -12,8 +13,8 @@ interface Props {
 type ApiDynamicQrCode = components['schemas']['DynamicQrCode'];
 
 function toRecord(data: ApiDynamicQrCode | null, label: string, destinationUrl: string): DynamicQRRecord {
-  const today = new Date().toISOString().slice(0, 10) as DynamicQRRecord['date'];
   if (!data) {
+    const today = new Date().toISOString().slice(0, 10) as DynamicQRRecord['date'];
     return {
       id: crypto.randomUUID(),
       label,
@@ -29,26 +30,14 @@ function toRecord(data: ApiDynamicQrCode | null, label: string, destinationUrl: 
       date: today,
     };
   }
-  return {
-    id: data.id,
-    label: data.label ?? data.slug,
-    destinationUrl: data.destinationUrl,
-    shortUrl: data.shortUrl,
-    slug: data.slug,
-    status: data.status,
-    downloadUrl: data.downloadUrl,
-    scanCount: data.scanCount,
-    lastScannedAt: data.lastScannedAt ?? null,
-    expiresAt: data.expiresAt ?? null,
-    folder: data.folder?.name ?? '—',
-    date: data.createdAt.slice(0, 10) as DynamicQRRecord['date'],
-  };
+  return mapDynamicQrCode(data);
 }
 
 async function postDynamicQRCode(
   token: string,
   body: { label: string; destinationUrl: string },
 ): Promise<{ data: ApiDynamicQrCode | undefined; error: unknown }> {
+  // The SDK dist does not bundle schema types; cast is required to call POST.
   const client = createQRapidClient(token) as { POST: (path: string, opts: { body: unknown }) => Promise<{ data: ApiDynamicQrCode | undefined; error: unknown }> };
   return client.POST('/dynamic-qr-codes', { body });
 }

@@ -32,7 +32,13 @@ export function DynamicQRView({ folders }: Readonly<DynamicQRViewProps>) {
   const [additions, setAdditions] = useState<DynamicQRRecord[]>([]);
   const [showCreate, setShowCreate] = useState(false);
 
-  const allRecords = useMemo(() => [...additions, ...records], [additions, records]);
+  const allRecords = useMemo(() => {
+    const map = new Map<string, DynamicQRRecord>();
+    for (const r of [...additions, ...records]) {
+      if (!map.has(r.id)) map.set(r.id, r);
+    }
+    return Array.from(map.values());
+  }, [additions, records]);
 
   const {
     searchQuery, folderFilter, allFolders,
