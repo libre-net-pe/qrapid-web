@@ -53,7 +53,7 @@ async function postDynamicQRCode(
   return client.POST('/dynamic-qr-codes', { body });
 }
 
-export function CreateDynamicQRPanel({ onClose, onCreated }: Props) {
+export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
   const { user } = useAuth();
   const [label, setLabel] = useState('');
   const [destinationUrl, setDestinationUrl] = useState('');
@@ -101,8 +101,15 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Props) {
 
   return (
     <>
-      <div className="create-overlay" onClick={onClose} />
-      <aside className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Dynamic QR Code">
+      <div
+        className="create-overlay"
+        role="button"
+        tabIndex={0}
+        aria-label="Close dialog"
+        onClick={onClose}
+        onKeyDown={(e) => e.key === 'Enter' && onClose()}
+      />
+      <dialog className="create-drawer" aria-label="Create Dynamic QR Code" open>
         <div className="create-head">
           <div>
             <p className="create-eyebrow">New Dynamic QR Code</p>
@@ -157,7 +164,7 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Props) {
             </button>
           </div>
         </form>
-      </aside>
+      </dialog>
     </>
   );
 }
