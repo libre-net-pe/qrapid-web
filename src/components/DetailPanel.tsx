@@ -9,6 +9,14 @@ interface DetailPanelProps {
   record: QRRecord | null;
 }
 
+function handleDownload(fn: () => void): void {
+  try {
+    fn();
+  } catch (err) {
+    console.error('QR download failed:', err);
+  }
+}
+
 export function DetailPanel({ record }: DetailPanelProps) {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -66,10 +74,10 @@ export function DetailPanel({ record }: DetailPanelProps) {
 
       <div className="p-acts">
         <button className="btn-edit">Edit Label</button>
-        <button className="btn-dl" onClick={() => svgRef.current && downloadSVG(svgRef.current, record.label)}>
+        <button className="btn-dl" onClick={() => handleDownload(() => svgRef.current && downloadSVG(svgRef.current, record.label))}>
           SVG
         </button>
-        <button className="btn-dl" onClick={() => svgRef.current && downloadPNG(svgRef.current, record.label)}>
+        <button className="btn-dl" onClick={() => handleDownload(() => svgRef.current && downloadPNG(svgRef.current, record.label))}>
           PNG
         </button>
       </div>

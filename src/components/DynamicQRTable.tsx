@@ -1,5 +1,6 @@
 import type { DynamicQRRecord } from '@/types';
 import { QRCodeSVG } from 'qrcode.react';
+import { QR_FG_COLOR, QR_BG_COLOR } from '@/constants/qr';
 
 interface DynamicQRTableProps {
   readonly records: DynamicQRRecord[];
@@ -29,7 +30,7 @@ export function DynamicQRTable({ records, selectedIndex, onSelect }: Readonly<Dy
             onClick={() => onSelect(i)}
             type="button"
           >
-            <QRCodeSVG value={r.shortUrl} size={24} fgColor="#1A0A05" bgColor="#FFFFFF" />
+            <QRCodeSVG value={r.shortUrl} size={24} fgColor={QR_FG_COLOR} bgColor={QR_BG_COLOR} />
             <div className="tr-name">{r.label}</div>
             <div className="tr-mono">{r.destinationUrl}</div>
             <div>

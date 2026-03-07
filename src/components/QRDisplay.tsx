@@ -1,5 +1,8 @@
 import { forwardRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
+import { QR_FG_COLOR, QR_BG_COLOR } from '@/constants/qr';
+
+const LOGO_SIZE_RATIO = 0.2;
 
 interface QRDisplayProps {
   value: string;
@@ -10,7 +13,7 @@ interface QRDisplayProps {
 export const QRDisplay = forwardRef<SVGSVGElement, QRDisplayProps>(
   ({ value, size, logoUrl }, ref) => {
     const imageSettings = logoUrl
-      ? { src: logoUrl, height: Math.round(size * 0.2), width: Math.round(size * 0.2), excavate: true }
+      ? { src: logoUrl, height: Math.round(size * LOGO_SIZE_RATIO), width: Math.round(size * LOGO_SIZE_RATIO), excavate: true }
       : undefined;
 
     return (
@@ -18,8 +21,8 @@ export const QRDisplay = forwardRef<SVGSVGElement, QRDisplayProps>(
         ref={ref}
         value={value || ' '}
         size={size}
-        fgColor="#1A0A05"
-        bgColor="#FFFFFF"
+        fgColor={QR_FG_COLOR}
+        bgColor={QR_BG_COLOR}
         imageSettings={imageSettings}
       />
     );

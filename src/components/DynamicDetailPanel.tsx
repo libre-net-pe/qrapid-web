@@ -11,6 +11,14 @@ function safeUrl(url: string): string {
   return /^https?:\/\//.test(url) ? url : '#';
 }
 
+function handleDownload(fn: () => void): void {
+  try {
+    fn();
+  } catch (err) {
+    console.error('QR download failed:', err);
+  }
+}
+
 export function DynamicDetailPanel({ record }: Readonly<DynamicDetailPanelProps>) {
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -71,10 +79,10 @@ export function DynamicDetailPanel({ record }: Readonly<DynamicDetailPanelProps>
 
       <div className="p-acts">
         <button className="btn-edit">Edit Destination</button>
-        <button className="btn-dl" onClick={() => svgRef.current && downloadSVG(svgRef.current, record.label)}>
+        <button className="btn-dl" onClick={() => handleDownload(() => svgRef.current && downloadSVG(svgRef.current, record.label))}>
           SVG
         </button>
-        <button className="btn-dl" onClick={() => svgRef.current && downloadPNG(svgRef.current, record.label)}>
+        <button className="btn-dl" onClick={() => handleDownload(() => svgRef.current && downloadPNG(svgRef.current, record.label))}>
           PNG
         </button>
         <a className="btn-dl btn-dl-link" href={safeUrl(record.downloadUrl)} target="_blank" rel="noreferrer">
