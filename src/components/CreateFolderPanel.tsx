@@ -78,7 +78,7 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
 
   return (
     <>
-      <div className="create-overlay" onClick={onClose} />
+      <div className="create-overlay" onClick={onClose} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClose(); }} role="button" tabIndex={-1} aria-label="Close" />
       <aside className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Folder" onKeyDown={handleKeyDown}>
         <div className="create-head">
           <div>
