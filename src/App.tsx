@@ -7,6 +7,7 @@ import { DetailPanel } from '@/components/DetailPanel';
 import { CreateQRPanel } from '@/components/CreateQRPanel';
 import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
 import { DynamicQRView } from '@/pages/DynamicQRView';
+import { FolderView } from '@/pages/FolderView';
 import { QREmptyIcon } from '@/components/QREmptyIcon';
 import { useQRCodes } from '@/hooks/useQRCodes';
 import { useFolders } from '@/hooks/useFolders';
@@ -122,19 +123,23 @@ function StaticQRContent({ folders }: Readonly<{ folders: Folder[] }>) {
 }
 
 export default function App() {
-  const { folders } = useFolders();
+  const { folders, loading: foldersLoading, error: foldersError } = useFolders();
   const location = useLocation();
   const isDynamic = location.pathname.startsWith('/dynamic');
+  const isFolders = location.pathname.startsWith('/folders');
+
+  let activeView: 'static' | 'dynamic' | 'folders' = 'static';
+  if (isDynamic) activeView = 'dynamic';
+  else if (isFolders) activeView = 'folders';
 
   return (
     <div className="wrap">
-      <Sidebar
-        folders={folders}
-        activeView={isDynamic ? 'dynamic' : 'static'}
-      />
+      <Sidebar folders={folders} activeView={activeView} />
       {isDynamic
         ? <DynamicQRView folders={folders} />
-        : <StaticQRContent folders={folders} />
+        : isFolders
+          ? <FolderView folders={folders} loading={foldersLoading} error={foldersError} />
+          : <StaticQRContent folders={folders} />
       }
     </div>
   );

@@ -26,7 +26,7 @@ function NavItem({ active, onClick, label, count, children }: Readonly<NavItemPr
 
 interface SidebarProps {
   readonly folders: Folder[];
-  readonly activeView: 'static' | 'dynamic';
+  readonly activeView: 'static' | 'dynamic' | 'folders';
   readonly staticCount?: number;
   readonly dynamicCount?: number;
 }
@@ -79,12 +79,11 @@ export function Sidebar({ folders, activeView, staticCount, dynamicCount }: Read
           </svg>
         </NavItem>
 
-        <div className="nav-item">
+        <NavItem active={activeView === 'folders'} onClick={() => navigate('/folders')} label="Folders" count={folders.length > 0 ? folders.length : undefined}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
             <path d="M1 4.5A1.5 1.5 0 012.5 3H5.5l1 1H12a1.5 1.5 0 011.5 1.5V11A1.5 1.5 0 0112 12.5H2A1.5 1.5 0 01.5 11V4.5z"/>
           </svg>
-          <span className="nav-txt dim">Folders</span>
-        </div>
+        </NavItem>
 
         {folders.length > 0 && (
           <div className="sb-folders">
