@@ -37,7 +37,7 @@ export function FolderView({ folders, loading, error }: Readonly<FolderViewProps
       </div>
     );
   } else if (loading) {
-    content = <div style={{ padding: '2rem', opacity: 0.5 }}>Loading…</div>;
+    content = <div className="loading-state">Loading…</div>;
   } else if (folders.length === 0) {
     content = (
       <div className="empty-state">

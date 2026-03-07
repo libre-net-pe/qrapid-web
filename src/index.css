@@ -1121,6 +1121,12 @@ aside.panel { animation: panelIn 0.22s ease both; }
   margin-bottom: 4px;
 }
 
+/* Loading state */
+.loading-state {
+  padding: 2rem;
+  opacity: 0.5;
+}
+
 /* Error / empty states */
 .error-state, .empty-state {
   flex: 1;
