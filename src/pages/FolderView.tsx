@@ -23,9 +23,10 @@ interface FolderViewProps {
   readonly folders: Folder[];
   readonly loading: boolean;
   readonly error: string | null;
+  readonly onNewFolder?: () => void;
 }
 
-export function FolderView({ folders, loading, error }: Readonly<FolderViewProps>) {
+export function FolderView({ folders, loading, error, onNewFolder }: Readonly<FolderViewProps>) {
   let content: React.ReactNode;
 
   if (error) {
@@ -46,7 +47,7 @@ export function FolderView({ folders, loading, error }: Readonly<FolderViewProps
         </div>
         <p className="error-state-title">No folders yet</p>
         <p className="error-state-sub">Create a folder to organize your QR codes.</p>
-        <button className="btn-new">+ New Folder</button>
+        <button className="btn-new" onClick={onNewFolder}>+ New Folder</button>
       </div>
     );
   } else {
@@ -82,7 +83,7 @@ export function FolderView({ folders, loading, error }: Readonly<FolderViewProps
           </span>
         </div>
         <div className="topbar-right">
-          <button className="btn-new" disabled={loading || !!error}>+ New Folder</button>
+          <button className="btn-new" disabled={loading || !!error} onClick={onNewFolder}>+ New Folder</button>
         </div>
       </div>
 

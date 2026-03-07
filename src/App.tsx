@@ -135,12 +135,11 @@ export default function App() {
   return (
     <div className="wrap">
       <Sidebar folders={folders} activeView={activeView} />
-      {isDynamic
-        ? <DynamicQRView folders={folders} />
-        : isFolders
-          ? <FolderView folders={folders} loading={foldersLoading} error={foldersError} />
-          : <StaticQRContent folders={folders} />
-      }
+      {(() => {
+        if (isDynamic) return <DynamicQRView folders={folders} />;
+        if (isFolders) return <FolderView folders={folders} loading={foldersLoading} error={foldersError} />;
+        return <StaticQRContent folders={folders} />;
+      })()}
     </div>
   );
 }
