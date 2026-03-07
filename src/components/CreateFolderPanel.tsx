@@ -3,6 +3,7 @@ import { type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
 import type { Folder } from '@/types';
 import { createQRapidClient } from '@/lib/qrapidClient';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 interface Props {
   onClose: () => void;
@@ -35,6 +36,8 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const nameRef = useRef<HTMLInputElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  useFocusTrap(drawerRef);
 
   useEffect(() => {
     nameRef.current?.focus();
@@ -79,7 +82,7 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
   return (
     <>
       <div className="create-overlay" onClick={onClose} onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onClose(); }} role="button" tabIndex={-1} aria-label="Close" />
-      <aside className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Folder" onKeyDown={handleKeyDown}>
+      <aside ref={drawerRef} className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Folder" onKeyDown={handleKeyDown}>
         <div className="create-head">
           <div>
             <p className="create-eyebrow">New Folder</p>
