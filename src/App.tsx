@@ -5,6 +5,7 @@ import { Sidebar } from '@/components/Sidebar';
 import { QRTable } from '@/components/QRTable';
 import { DetailPanel } from '@/components/DetailPanel';
 import { CreateQRPanel } from '@/components/CreateQRPanel';
+import { CreateFolderPanel } from '@/components/CreateFolderPanel';
 import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
 import { DynamicQRView } from '@/pages/DynamicQRView';
 import { FolderView } from '@/pages/FolderView';
@@ -124,7 +125,11 @@ function StaticQRContent({ folders }: Readonly<{ folders: Folder[] }>) {
 }
 
 export default function App() {
-  const { folders, loading: foldersLoading, error: foldersError } = useFolders();
+  const { folders: fetchedFolders, loading: foldersLoading, error: foldersError } = useFolders();
+  const [folderAdditions, setFolderAdditions] = useState<Folder[]>([]);
+  const [showCreateFolder, setShowCreateFolder] = useState(false);
+  const folders = useMemo(() => [...folderAdditions, ...fetchedFolders], [folderAdditions, fetchedFolders]);
+
   const location = useLocation();
   const isDynamic = location.pathname.startsWith('/dynamic');
   const isFolders = location.pathname.startsWith('/folders');
@@ -135,15 +140,26 @@ export default function App() {
   else if (isFolders) activeView = 'folders';
   else if (isAssets) activeView = 'assets';
 
+  function handleFolderCreated(folder: Folder) {
+    setFolderAdditions(prev => [folder, ...prev]);
+    setShowCreateFolder(false);
+  }
+
   return (
     <div className="wrap">
       <Sidebar folders={folders} activeView={activeView} />
       {(() => {
         if (isDynamic) return <DynamicQRView folders={folders} />;
-        if (isFolders) return <FolderView folders={folders} loading={foldersLoading} error={foldersError} />;
+        if (isFolders) return <FolderView folders={folders} loading={foldersLoading} error={foldersError} onNewFolder={() => setShowCreateFolder(true)} />;
         if (isAssets) return <AssetsView />;
         return <StaticQRContent folders={folders} />;
       })()}
+      {showCreateFolder && (
+        <CreateFolderPanel
+          onClose={() => setShowCreateFolder(false)}
+          onCreated={handleFolderCreated}
+        />
+      )}
     </div>
   );
 }
