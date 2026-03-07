@@ -1,5 +1,7 @@
+import { useRef } from 'react';
 import type { DynamicQRRecord } from '@/types';
-import { makeQR } from '@/utils/makeQR';
+import { QRDisplay } from '@/components/QRDisplay';
+import { downloadSVG, downloadPNG } from '@/utils/downloadQR';
 
 interface DynamicDetailPanelProps {
   readonly record: DynamicQRRecord | null;
@@ -9,7 +11,17 @@ function safeUrl(url: string): string {
   return /^https?:\/\//.test(url) ? url : '#';
 }
 
+function handleDownload(fn: () => void): void {
+  try {
+    fn();
+  } catch (err) {
+    console.error('QR download failed:', err);
+  }
+}
+
 export function DynamicDetailPanel({ record }: Readonly<DynamicDetailPanelProps>) {
+  const svgRef = useRef<SVGSVGElement>(null);
+
   if (!record) return null;
 
   return (
@@ -24,7 +36,7 @@ export function DynamicDetailPanel({ record }: Readonly<DynamicDetailPanelProps>
       </div>
 
       <div className="p-qr-zone">
-        <div dangerouslySetInnerHTML={{ __html: makeQR(record.shortUrl) }} />
+        <QRDisplay ref={svgRef} value={record.shortUrl} size={156} />
         <div className="p-qr-hint">Encodes short URL · redirects to destination</div>
       </div>
 
@@ -67,8 +79,14 @@ export function DynamicDetailPanel({ record }: Readonly<DynamicDetailPanelProps>
 
       <div className="p-acts">
         <button className="btn-edit">Edit Destination</button>
+        <button className="btn-dl" onClick={() => handleDownload(() => svgRef.current && downloadSVG(svgRef.current, record.label))}>
+          SVG
+        </button>
+        <button className="btn-dl" onClick={() => handleDownload(() => svgRef.current && downloadPNG(svgRef.current, record.label))}>
+          PNG
+        </button>
         <a className="btn-dl btn-dl-link" href={safeUrl(record.downloadUrl)} target="_blank" rel="noreferrer">
-          Download
+          API
         </a>
       </div>
       <button className="btn-del">Delete record…</button>
