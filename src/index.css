@@ -927,6 +927,8 @@ aside.panel { animation: panelIn 0.22s ease both; }
   color: var(--si);
 }
 
+.create-lbl-optional { opacity: 0.5; }
+
 .create-hint {
   font-family: 'Fira Code', monospace;
   font-size: 9.5px;
