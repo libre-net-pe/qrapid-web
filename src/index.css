@@ -1161,7 +1161,7 @@ aside.panel { animation: panelIn 0.22s ease both; }
 }
 
 .asset-card {
-  border: 1px solid var(--br);
+  border: 1px solid var(--div);
   border-radius: 6px;
   overflow: hidden;
   background: var(--sb);
@@ -1172,7 +1172,7 @@ aside.panel { animation: panelIn 0.22s ease both; }
 .asset-card-preview {
   width: 100%;
   aspect-ratio: 1;
-  background: var(--bg);
+  background: var(--main);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1187,7 +1187,7 @@ aside.panel { animation: panelIn 0.22s ease both; }
 
 .asset-card-info {
   padding: 8px 10px;
-  border-top: 1px solid var(--br);
+  border-top: 1px solid var(--div);
   display: flex;
   flex-direction: column;
   gap: 2px;

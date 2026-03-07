@@ -7,6 +7,10 @@ import type { components } from '@libre-net-pe/qrapid-sdk';
 
 type ApiLogo = components['schemas']['Logo'];
 
+type LogoUploadClient = {
+  POST: (path: string, opts: { body: FormData; bodySerializer: (b: FormData) => FormData }) => Promise<{ data: ApiLogo | undefined; error: unknown }>;
+};
+
 function AssetsEmptyIcon() {
   return (
     <svg width="52" height="52" viewBox="0 0 52 52" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
@@ -42,9 +46,7 @@ export function AssetsView() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const client = createQRapidClient(token) as {
-        POST: (path: string, opts: { body: FormData; bodySerializer: (b: FormData) => FormData }) => Promise<{ data: ApiLogo | undefined; error: unknown }>;
-      };
+      const client = createQRapidClient(token) as LogoUploadClient;
       const { data, error: apiError } = await client.POST('/assets/logo', {
         body: formData,
         bodySerializer: (b) => b,
