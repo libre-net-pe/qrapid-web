@@ -7,6 +7,8 @@ import type { components } from '@libre-net-pe/qrapid-sdk';
 
 type LogoCreateRequest = components['schemas']['LogoCreateRequest'];
 
+const MAX_LOGO_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
+
 function AssetsEmptyIcon() {
   return (
     <svg width="52" height="52" viewBox="0 0 52 52" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
@@ -36,8 +38,8 @@ export function AssetsView() {
   async function handleUpload(file: File) {
     if (!user) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      setError('File is too large. Maximum size is 2 MB.');
+    if (file.size > MAX_LOGO_SIZE_BYTES) {
+      setError(`File is too large. Maximum size is ${MAX_LOGO_SIZE_BYTES / (1024 * 1024)} MB.`);
       return;
     }
 
@@ -67,6 +69,7 @@ export function AssetsView() {
 
       const s3Res = await fetch(logoData.uploadUrl, { method: 'POST', body: form });
       if (!s3Res.ok) {
+        console.error('S3 upload failed:', await s3Res.text());
         setError('Failed to upload logo to storage.');
         return;
       }
@@ -87,7 +90,8 @@ export function AssetsView() {
         downloadUrl: downloadData.downloadUrl,
         createdAt: logoData.createdAt,
       }, ...prev]);
-    } catch {
+    } catch (err) {
+      console.error('Upload failed:', err);
       setError('An unexpected error occurred. Please try again.');
     } finally {
       setUploading(false);
