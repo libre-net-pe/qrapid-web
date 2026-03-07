@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import React, { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
 import type { Folder } from '@/types';
@@ -38,12 +38,11 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
 
   useEffect(() => {
     nameRef.current?.focus();
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') onClose();
-    }
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, [onClose]);
+  }, []);
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLElement>) {
+    if (e.key === 'Escape') onClose();
+  }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -80,7 +79,7 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
   return (
     <>
       <div className="create-overlay" onClick={onClose} />
-      <aside className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Folder">
+      <aside className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Folder" onKeyDown={handleKeyDown}>
         <div className="create-head">
           <div>
             <p className="create-eyebrow">New Folder</p>
