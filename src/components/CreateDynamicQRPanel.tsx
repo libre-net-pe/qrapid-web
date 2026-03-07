@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/useAuth';
 import type { DynamicQRRecord } from '@/types';
 import { createQRapidClient } from '@/lib/qrapidClient';
 import { mapDynamicQrCode } from '@/hooks/useDynamicQRCodes';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 interface Props {
   onClose: () => void;
@@ -49,6 +50,8 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const labelRef = useRef<HTMLInputElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  useFocusTrap(drawerRef);
 
   useEffect(() => {
     labelRef.current?.focus();
@@ -98,7 +101,7 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
         onClick={onClose}
         onKeyDown={(e) => e.key === 'Enter' && onClose()}
       />
-      <dialog className="create-drawer" aria-label="Create Dynamic QR Code" open>
+      <aside ref={drawerRef} className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Dynamic QR Code">
         <div className="create-head">
           <div>
             <p className="create-eyebrow">New Dynamic QR Code</p>
@@ -153,7 +156,7 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
             </button>
           </div>
         </form>
-      </dialog>
+      </aside>
     </>
   );
 }

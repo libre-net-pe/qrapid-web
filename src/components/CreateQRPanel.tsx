@@ -3,6 +3,7 @@ import { type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
 import type { QRRecord, QRType } from '@/types';
 import { createQRapidClient } from '@/lib/qrapidClient';
+import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 interface Props {
   onClose: () => void;
@@ -54,6 +55,8 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const labelRef = useRef<HTMLInputElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+  useFocusTrap(drawerRef);
   const cfg = CONTENT_CONFIG[type];
 
   useEffect(() => {
@@ -98,7 +101,7 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
   return (
     <>
       <div className="create-overlay" onClick={onClose} />
-      <aside className="create-drawer" role="dialog" aria-modal="true" aria-label="Create QR Code">
+      <aside ref={drawerRef} className="create-drawer" role="dialog" aria-modal="true" aria-label="Create QR Code">
         <div className="create-head">
           <div>
             <p className="create-eyebrow">New QR Code</p>
