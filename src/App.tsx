@@ -8,6 +8,7 @@ import { CreateQRPanel } from '@/components/CreateQRPanel';
 import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
 import { DynamicQRView } from '@/pages/DynamicQRView';
 import { FolderView } from '@/pages/FolderView';
+import { AssetsView } from '@/pages/AssetsView';
 import { QREmptyIcon } from '@/components/QREmptyIcon';
 import { useQRCodes } from '@/hooks/useQRCodes';
 import { useFolders } from '@/hooks/useFolders';
@@ -127,10 +128,12 @@ export default function App() {
   const location = useLocation();
   const isDynamic = location.pathname.startsWith('/dynamic');
   const isFolders = location.pathname.startsWith('/folders');
+  const isAssets = location.pathname.startsWith('/assets');
 
-  let activeView: 'static' | 'dynamic' | 'folders' = 'static';
+  let activeView: 'static' | 'dynamic' | 'folders' | 'assets' = 'static';
   if (isDynamic) activeView = 'dynamic';
   else if (isFolders) activeView = 'folders';
+  else if (isAssets) activeView = 'assets';
 
   return (
     <div className="wrap">
@@ -138,6 +141,7 @@ export default function App() {
       {(() => {
         if (isDynamic) return <DynamicQRView folders={folders} />;
         if (isFolders) return <FolderView folders={folders} loading={foldersLoading} error={foldersError} />;
+        if (isAssets) return <AssetsView />;
         return <StaticQRContent folders={folders} />;
       })()}
     </div>

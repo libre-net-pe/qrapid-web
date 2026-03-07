@@ -1150,3 +1150,59 @@ aside.panel { animation: panelIn 0.22s ease both; }
   color: var(--t2);
   opacity: 0.6;
 }
+
+/* Assets grid */
+.assets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+  padding: 24px;
+  align-content: start;
+}
+
+.asset-card {
+  border: 1px solid var(--br);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--sb);
+  transition: border-color 0.15s;
+}
+.asset-card:hover { border-color: var(--si); }
+
+.asset-card-preview {
+  width: 100%;
+  aspect-ratio: 1;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.asset-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 12px;
+}
+
+.asset-card-info {
+  padding: 8px 10px;
+  border-top: 1px solid var(--br);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.asset-card-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--t1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.asset-card-date {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: var(--t3);
+}
