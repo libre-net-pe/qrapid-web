@@ -98,7 +98,7 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
         onClick={onClose}
         onKeyDown={(e) => e.key === 'Enter' && onClose()}
       />
-      <dialog className="create-drawer" aria-label="Create Dynamic QR Code" open>
+      <aside className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Dynamic QR Code">
         <div className="create-head">
           <div>
             <p className="create-eyebrow">New Dynamic QR Code</p>
@@ -153,7 +153,7 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
             </button>
           </div>
         </form>
-      </dialog>
+      </aside>
     </>
   );
 }
