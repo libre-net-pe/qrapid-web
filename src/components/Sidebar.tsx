@@ -26,7 +26,7 @@ function NavItem({ active, onClick, label, count, children }: Readonly<NavItemPr
 
 interface SidebarProps {
   readonly folders: Folder[];
-  readonly activeView: 'static' | 'dynamic' | 'folders';
+  readonly activeView: 'static' | 'dynamic' | 'folders' | 'assets';
   readonly staticCount?: number;
   readonly dynamicCount?: number;
 }
@@ -96,14 +96,13 @@ export function Sidebar({ folders, activeView, staticCount, dynamicCount }: Read
           </div>
         )}
 
-        <div className="nav-item">
+        <NavItem active={activeView === 'assets'} onClick={() => navigate('/assets')} label="Assets">
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
             <rect x="1" y="1" width="12" height="12" rx="1.5"/>
             <circle cx="4.5" cy="4.5" r="1"/>
             <path d="M1 10l3.5-3.5 2.5 2.5 1.5-1.5L13 11"/>
           </svg>
-          <span className="nav-txt dim">Assets</span>
-        </div>
+        </NavItem>
       </nav>
 
       <div className="sb-user">

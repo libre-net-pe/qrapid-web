@@ -30,3 +30,10 @@ export interface Folder {
   description?: string | null;
   codeCount: number;
 }
+
+export interface Logo {
+  logoId: string;
+  filename: string;
+  previewUrl: string;
+  createdAt: string;
+}
