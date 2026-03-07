@@ -34,6 +34,6 @@ export interface Folder {
 export interface Logo {
   logoId: string;
   filename: string;
-  previewUrl: string;
+  downloadUrl: string;
   createdAt: string;
 }
