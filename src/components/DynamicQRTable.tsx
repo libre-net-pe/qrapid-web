@@ -1,5 +1,5 @@
 import type { DynamicQRRecord } from '@/types';
-import { makeQR } from '@/utils/makeQR';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface DynamicQRTableProps {
   readonly records: DynamicQRRecord[];
@@ -29,10 +29,7 @@ export function DynamicQRTable({ records, selectedIndex, onSelect }: Readonly<Dy
             onClick={() => onSelect(i)}
             type="button"
           >
-            <div
-              dangerouslySetInnerHTML={{ __html: makeQR(r.shortUrl) }}
-              style={{ lineHeight: 0 }}
-            />
+            <QRCodeSVG value={r.shortUrl} size={24} fgColor="#1A0A05" bgColor="#FFFFFF" />
             <div className="tr-name">{r.label}</div>
             <div className="tr-mono">{r.destinationUrl}</div>
             <div>

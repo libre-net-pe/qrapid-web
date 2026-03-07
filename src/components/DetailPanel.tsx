@@ -1,13 +1,17 @@
+import { useRef } from 'react';
 import type { QRRecord } from '@/types';
-import { makeQR } from '@/utils/makeQR';
+import { QRDisplay } from '@/components/QRDisplay';
 import { getBadgeClass } from '@/utils/badges';
 import { scoreClass } from '@/utils/score';
+import { downloadSVG, downloadPNG } from '@/utils/downloadQR';
 
 interface DetailPanelProps {
   record: QRRecord | null;
 }
 
 export function DetailPanel({ record }: DetailPanelProps) {
+  const svgRef = useRef<SVGSVGElement>(null);
+
   if (!record) return null;
 
   const badgeClass = getBadgeClass(record.type);
@@ -26,7 +30,7 @@ export function DetailPanel({ record }: DetailPanelProps) {
       </div>
 
       <div className="p-qr-zone">
-        <div dangerouslySetInnerHTML={{ __html: makeQR(record.label) }} />
+        <QRDisplay ref={svgRef} value={record.content} size={156} />
         <div className="p-qr-hint">Scan to verify · espresso on white</div>
       </div>
 
@@ -62,7 +66,12 @@ export function DetailPanel({ record }: DetailPanelProps) {
 
       <div className="p-acts">
         <button className="btn-edit">Edit Label</button>
-        <button className="btn-dl">Download</button>
+        <button className="btn-dl" onClick={() => svgRef.current && downloadSVG(svgRef.current, record.label)}>
+          SVG
+        </button>
+        <button className="btn-dl" onClick={() => svgRef.current && downloadPNG(svgRef.current, record.label)}>
+          PNG
+        </button>
       </div>
       <button className="btn-del">Delete record…</button>
     </aside>

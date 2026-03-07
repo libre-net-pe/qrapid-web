@@ -1,5 +1,5 @@
 import type { QRRecord } from '@/types';
-import { makeQR } from '@/utils/makeQR';
+import { QRCodeSVG } from 'qrcode.react';
 import { getBadgeClass } from '@/utils/badges';
 
 interface QRTableProps {
@@ -29,10 +29,7 @@ export function QRTable({ records, selectedIndex, onSelect }: Readonly<QRTablePr
             style={{ animationDelay: `${i * 40}ms` }}
             onClick={() => onSelect(i)}
           >
-            <div
-              dangerouslySetInnerHTML={{ __html: makeQR(r.label) }}
-              style={{ lineHeight: 0 }}
-            />
+            <QRCodeSVG value={r.content} size={24} fgColor="#1A0A05" bgColor="#FFFFFF" />
             <div className="tr-name">{r.label}</div>
             <div className="tr-mono">{r.content}</div>
             <div>
