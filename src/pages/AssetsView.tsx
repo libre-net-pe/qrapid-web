@@ -5,11 +5,7 @@ import { useAuth } from '@/contexts/useAuth';
 import { createQRapidClient } from '@/lib/qrapidClient';
 import type { components } from '@libre-net-pe/qrapid-sdk';
 
-type ApiLogo = components['schemas']['Logo'];
-
-type LogoUploadClient = {
-  POST: (path: string, opts: { body: FormData; bodySerializer: (b: FormData) => FormData }) => Promise<{ data: ApiLogo | undefined; error: unknown }>;
-};
+type LogoCreateRequest = components['schemas']['LogoCreateRequest'];
 
 function AssetsEmptyIcon() {
   return (
@@ -39,32 +35,58 @@ export function AssetsView() {
 
   async function handleUpload(file: File) {
     if (!user) return;
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError('File is too large. Maximum size is 2 MB.');
+      return;
+    }
+
+    const contentType = file.type as LogoCreateRequest['contentType'];
     setUploading(true);
     setError(null);
     try {
       const token = await user.getIdToken();
-      const formData = new FormData();
-      formData.append('file', file);
+      const api = createQRapidClient(token);
 
-      const client = createQRapidClient(token) as LogoUploadClient;
-      const { data, error: apiError } = await client.POST('/assets/logo', {
-        body: formData,
-        bodySerializer: (b) => b,
+      // Step 1: Request pre-signed upload URL
+      const { data: logoData, error: apiError } = await api.POST('/assets/logo', {
+        body: { filename: file.name, contentType },
       });
 
-      if (apiError) {
-        setError(typeof apiError === 'string' ? apiError : 'Failed to upload logo.');
+      if (apiError || !logoData) {
+        setError('Failed to initiate logo upload.');
         return;
       }
 
-      if (data) {
-        setLogos(prev => [{
-          logoId: data.logoId,
-          filename: data.filename,
-          previewUrl: data.previewUrl,
-          createdAt: data.createdAt,
-        }, ...prev]);
+      // Step 2: Upload file directly to S3 via pre-signed URL
+      const form = new FormData();
+      for (const [key, value] of Object.entries(logoData.uploadFields)) {
+        form.append(key, value);
       }
+      form.append('file', file);
+
+      const s3Res = await fetch(logoData.uploadUrl, { method: 'POST', body: form });
+      if (!s3Res.ok) {
+        setError('Failed to upload logo to storage.');
+        return;
+      }
+
+      // Step 3: Fetch display URL
+      const { data: downloadData, error: downloadError } = await api.GET('/assets/logo/{logoId}', {
+        params: { path: { logoId: logoData.logoId } },
+      });
+
+      if (downloadError || !downloadData) {
+        setError('Logo uploaded but failed to fetch preview.');
+        return;
+      }
+
+      setLogos(prev => [{
+        logoId: logoData.logoId,
+        filename: logoData.filename,
+        downloadUrl: downloadData.downloadUrl,
+        createdAt: logoData.createdAt,
+      }, ...prev]);
     } catch {
       setError('An unexpected error occurred. Please try again.');
     } finally {
@@ -108,7 +130,7 @@ export function AssetsView() {
         {logos.map(logo => (
           <div key={logo.logoId} className="asset-card">
             <div className="asset-card-preview">
-              <img src={logo.previewUrl} alt={logo.filename} />
+              <img src={logo.downloadUrl} alt={logo.filename} />
             </div>
             <div className="asset-card-info">
               <span className="asset-card-name">{logo.filename}</span>

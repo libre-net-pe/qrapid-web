@@ -12,7 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@libre-net-pe/qrapid-sdk": "^0.1.2",
+    "@libre-net-pe/qrapid-sdk": "0.1.4",
     "firebase": "^12.10.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
