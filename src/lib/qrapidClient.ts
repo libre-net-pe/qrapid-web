@@ -7,6 +7,8 @@ export function createQRapidClient(token: string) {
 
   client.use({
     async onResponse({ request, schemaPath, response }) {
+      // Don't retry more than once to prevent infinite loops
+      if (request.headers.get('X-Provisioning-Retry')) return;
       // Exclude /me itself to prevent recursion
       if (schemaPath === '/me') return;
       if (response.status !== 401) return;

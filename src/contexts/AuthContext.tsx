@@ -19,8 +19,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const token = await firebaseUser.getIdToken();
           const api = createQRapidClient(token);
           await api.GET('/me');
-        } catch {
+        } catch (error) {
           // interceptor handles user_not_provisioned; other errors are non-fatal here
+          console.error('Initial user provisioning failed:', error);
         } finally {
           setProvisioning(false);
         }
