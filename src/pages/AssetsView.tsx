@@ -60,14 +60,12 @@ export function AssetsView() {
         return;
       }
 
-      // Step 2: Upload file directly to S3 via pre-signed URL
-      const form = new FormData();
-      for (const [key, value] of Object.entries(logoData.uploadFields)) {
-        form.append(key, value);
-      }
-      form.append('file', file);
-
-      const s3Res = await fetch(logoData.uploadUrl, { method: 'POST', body: form });
+      // Step 2: Upload file directly to storage via pre-signed PUT URL
+      const s3Res = await fetch(logoData.uploadUrl, {
+        method: 'PUT',
+        body: file,
+        headers: { 'Content-Type': file.type },
+      });
       if (!s3Res.ok) {
         console.error('S3 upload failed:', await s3Res.text());
         setError('Failed to upload logo to storage.');
@@ -172,7 +170,7 @@ export function AssetsView() {
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/png,image/jpeg,image/svg+xml"
+        accept="image/png,image/jpeg,image/webp,image/svg+xml"
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
