@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
 import type { Folder } from '@/types';
@@ -35,29 +35,15 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const nameRef = useRef<HTMLInputElement>(null);
-  const dialogRef = useRef<HTMLDialogElement>(null);
-
-  const handleClose = useCallback(() => {
-    dialogRef.current?.close();
-    onClose();
-  }, [onClose]);
 
   useEffect(() => {
-    dialogRef.current?.showModal();
     nameRef.current?.focus();
-  }, []);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    // Handle native Escape key and backdrop close from showModal
-    function onCancel(e: Event) {
-      e.preventDefault();
-      handleClose();
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
     }
-    dialog.addEventListener('cancel', onCancel);
-    return () => dialog.removeEventListener('cancel', onCancel);
-  }, [handleClose]);
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -92,13 +78,15 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
   }
 
   return (
-    <dialog ref={dialogRef} className="create-drawer" aria-label="Create Folder">
+    <>
+      <div className="create-overlay" onClick={onClose} />
+      <aside className="create-drawer" role="dialog" aria-modal="true" aria-label="Create Folder">
         <div className="create-head">
           <div>
             <p className="create-eyebrow">New Folder</p>
             <h2 className="create-title">Create</h2>
           </div>
-          <button className="create-close" onClick={handleClose} aria-label="Close">✕</button>
+          <button className="create-close" onClick={onClose} aria-label="Close">✕</button>
         </div>
 
         <form className="create-body" onSubmit={handleSubmit} noValidate>
@@ -137,7 +125,7 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
           </div>
 
           <div className="create-footer">
-            <button className="create-cancel" type="button" onClick={handleClose}>
+            <button className="create-cancel" type="button" onClick={onClose}>
               Cancel
             </button>
             <button
@@ -149,6 +137,7 @@ export function CreateFolderPanel({ onClose, onCreated }: Readonly<Props>) {
             </button>
           </div>
         </form>
-    </dialog>
+      </aside>
+    </>
   );
 }
