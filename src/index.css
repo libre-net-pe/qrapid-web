@@ -1001,6 +1001,86 @@ aside.panel { animation: panelIn 0.22s ease both; }
   color: var(--t2);
 }
 
+/* ─── Folder grid ─── */
+.folder-grid {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  align-content: start;
+}
+
+.folder-card {
+  background: var(--main);
+  border: 1px solid var(--div);
+  border-radius: 8px;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+  animation: fadeUp 0.2s ease both;
+}
+.folder-card:hover {
+  border-color: var(--si);
+  background: var(--si-bg);
+  box-shadow: 0 2px 8px rgba(196,91,48,0.08);
+}
+
+.folder-card-icon {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  background: var(--ch);
+  border: 1px solid var(--div);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--si);
+  transition: background 0.12s;
+}
+.folder-card:hover .folder-card-icon {
+  background: rgba(196,91,48,0.12);
+}
+
+.folder-card-body {
+  flex: 1;
+  min-width: 0;
+}
+.folder-card-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--t1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.folder-card-desc {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: var(--t2);
+  opacity: 0.6;
+  margin-top: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.folder-card-count {
+  flex-shrink: 0;
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  color: var(--si);
+  background: var(--si-bg);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
 /* Dynamic status badges */
 .badge-dyn-active { background: var(--si-bg); color: var(--si); }
 .badge-dyn-expired { background: var(--te-bg); color: var(--te); opacity: 0.75; }
@@ -1039,6 +1119,12 @@ aside.panel { animation: panelIn 0.22s ease both; }
 .empty-state-icon {
   color: var(--t3);
   margin-bottom: 4px;
+}
+
+/* Loading state */
+.loading-state {
+  padding: 2rem;
+  opacity: 0.5;
 }
 
 /* Error / empty states */
