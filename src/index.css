@@ -702,6 +702,33 @@ aside.panel { animation: panelIn 0.22s ease both; }
   background: var(--sb);
 }
 
+/* ─── Account setup / provisioning screen ─── */
+.account-setup {
+  height: 100%;
+  background: var(--sb);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.account-setup-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--si);
+  border-top-color: var(--t1);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.account-setup-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  color: var(--t2);
+}
+
 /* ─── Login page ─── */
 .login-shell {
   height: 100%;
