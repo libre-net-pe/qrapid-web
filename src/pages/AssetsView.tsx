@@ -8,6 +8,7 @@ import type { components } from '@libre-net-pe/qrapid-sdk';
 type LogoCreateRequest = components['schemas']['LogoCreateRequest'];
 
 const MAX_LOGO_SIZE_BYTES = 2 * 1024 * 1024; // 2 MB
+const ALLOWED_CONTENT_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'] as const;
 
 function AssetsEmptyIcon() {
   return (
@@ -40,6 +41,11 @@ export function AssetsView() {
 
     if (file.size > MAX_LOGO_SIZE_BYTES) {
       setError(`File is too large. Maximum size is ${MAX_LOGO_SIZE_BYTES / (1024 * 1024)} MB.`);
+      return;
+    }
+
+    if (!ALLOWED_CONTENT_TYPES.includes(file.type as typeof ALLOWED_CONTENT_TYPES[number])) {
+      setError(`Unsupported file type "${file.type}". Allowed types: PNG, JPEG, WebP, SVG.`);
       return;
     }
 
