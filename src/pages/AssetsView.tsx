@@ -45,7 +45,8 @@ export function AssetsView() {
     }
 
     if (!ALLOWED_CONTENT_TYPES.includes(file.type as typeof ALLOWED_CONTENT_TYPES[number])) {
-      setError(`Unsupported file type "${file.type}". Allowed types: PNG, JPEG, WebP, SVG.`);
+      const allowedFriendlyTypes = ALLOWED_CONTENT_TYPES.map(type => type.replace('image/', '').replace('+xml', '').toUpperCase()).join(', ');
+      setError(`Unsupported file type "${file.type}". Allowed types: ${allowedFriendlyTypes}.`);
       return;
     }
 
