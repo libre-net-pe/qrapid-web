@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
-import type { QRRecord, QRType } from '@/types';
+import type { QRRecord, QRType, Folder } from '@/types';
 import { createQRapidClient } from '@/lib/qrapidClient';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
 
 interface Props {
   onClose: () => void;
   onCreated: (record: QRRecord) => void;
+  folders: Folder[];
 }
 
 type ApiQRCode = components['schemas']['QrCode'];
@@ -47,11 +48,12 @@ async function postQRCode(
   return client.POST('/qr-codes', { body });
 }
 
-export function CreateQRPanel({ onClose, onCreated }: Props) {
+export function CreateQRPanel({ onClose, onCreated, folders }: Props) {
   const { user } = useAuth();
   const [label, setLabel] = useState('');
   const [content, setContent] = useState('');
   const [type, setType] = useState<QRType>('URL');
+  const [folderId, setFolderId] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const labelRef = useRef<HTMLInputElement>(null);
@@ -83,6 +85,7 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
         label: trimmedLabel,
         content: trimmedContent,
         type,
+        ...(folderId && { folderId }),
       });
 
       if (apiError) {
@@ -144,6 +147,23 @@ export function CreateQRPanel({ onClose, onCreated }: Props) {
                 Text
               </button>
             </div>
+          </div>
+
+          <div className="create-field">
+            <label className="create-lbl" htmlFor="qr-folder">
+              Folder <span className="create-lbl-optional">(optional)</span>
+            </label>
+            <select
+              id="qr-folder"
+              className="create-select"
+              value={folderId}
+              onChange={(e) => setFolderId(e.target.value)}
+            >
+              <option value="">— No folder —</option>
+              {folders.map(f => (
+                <option key={f.id} value={f.id}>{f.name}</option>
+              ))}
+            </select>
           </div>
 
           <div className="create-field">

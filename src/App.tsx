@@ -118,6 +118,7 @@ function StaticQRContent({ folders }: Readonly<{ folders: Folder[] }>) {
         <CreateQRPanel
           onClose={() => setShowCreate(false)}
           onCreated={handleCreated}
+          folders={folders}
         />
       )}
     </>
