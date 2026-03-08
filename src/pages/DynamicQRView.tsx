@@ -129,6 +129,7 @@ export function DynamicQRView({ folders }: Readonly<DynamicQRViewProps>) {
         <CreateDynamicQRPanel
           onClose={() => setShowCreate(false)}
           onCreated={(r) => { setAdditions(prev => [r, ...prev]); setShowCreate(false); }}
+          folders={folders}
         />
       )}
     </main>

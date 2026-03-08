@@ -909,24 +909,33 @@ aside.panel { animation: panelIn 0.22s ease both; }
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
-.create-input {
+.create-input, .create-select {
   font-family: 'Outfit', sans-serif;
   font-size: 13px;
   color: var(--t1);
   background: var(--main);
   border: 1px solid var(--div);
   border-radius: 5px;
-  padding: 9px 12px;
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
   width: 100%;
 }
+.create-input { padding: 9px 12px; }
 .create-input::placeholder { color: var(--t2); opacity: 0.4; }
-.create-input:focus {
+.create-input:focus, .create-select:focus {
   border-color: var(--si);
   box-shadow: 0 0 0 3px rgba(196,91,48,0.08);
 }
 .create-input.error { border-color: #C04030; }
+
+.create-select {
+  padding: 10px 32px 10px 12px;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237A4A2C' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+}
 
 .create-type-row {
   display: grid;

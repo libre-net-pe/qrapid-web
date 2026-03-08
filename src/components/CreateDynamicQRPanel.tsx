@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { type components } from '@libre-net-pe/qrapid-sdk';
 import { useAuth } from '@/contexts/useAuth';
-import type { DynamicQRRecord } from '@/types';
+import type { DynamicQRRecord, Folder } from '@/types';
 import { createQRapidClient } from '@/lib/qrapidClient';
 import { mapDynamicQrCode } from '@/hooks/useDynamicQRCodes';
 import { useFocusTrap } from '@/hooks/useFocusTrap';
@@ -9,6 +9,7 @@ import { useFocusTrap } from '@/hooks/useFocusTrap';
 interface Props {
   onClose: () => void;
   onCreated: (record: DynamicQRRecord) => void;
+  folders: Folder[];
 }
 
 type ApiDynamicQrCode = components['schemas']['DynamicQrCode'];
@@ -36,17 +37,18 @@ function toRecord(data: ApiDynamicQrCode | null, label: string, destinationUrl: 
 
 async function postDynamicQRCode(
   token: string,
-  body: { label: string; destinationUrl: string },
+  body: { label: string; destinationUrl: string; folderId?: string },
 ): Promise<{ data: ApiDynamicQrCode | undefined; error: unknown }> {
   // The SDK dist does not bundle schema types; cast is required to call POST.
   const client = createQRapidClient(token) as { POST: (path: string, opts: { body: unknown }) => Promise<{ data: ApiDynamicQrCode | undefined; error: unknown }> };
   return client.POST('/dynamic-qr-codes', { body });
 }
 
-export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
+export function CreateDynamicQRPanel({ onClose, onCreated, folders }: Readonly<Props>) {
   const { user } = useAuth();
   const [label, setLabel] = useState('');
   const [destinationUrl, setDestinationUrl] = useState('');
+  const [folderId, setFolderId] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const labelRef = useRef<HTMLInputElement>(null);
@@ -76,6 +78,7 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
       const { data, error: apiError } = await postDynamicQRCode(token, {
         label: trimmedLabel,
         destinationUrl: trimmedUrl,
+        ...(folderId && { folderId }),
       });
 
       if (apiError) {
@@ -124,6 +127,23 @@ export function CreateDynamicQRPanel({ onClose, onCreated }: Readonly<Props>) {
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setLabel(e.target.value)}
                 required
               />
+            </div>
+
+            <div className="create-field">
+              <label className="create-lbl" htmlFor="dqr-folder">
+                Folder <span className="create-lbl-optional">(optional)</span>
+              </label>
+              <select
+                id="dqr-folder"
+                className="create-select"
+                value={folderId}
+                onChange={(e) => setFolderId(e.target.value)}
+              >
+                <option value="">— No folder —</option>
+                {folders.map(f => (
+                  <option key={f.id} value={f.id}>{f.name}</option>
+                ))}
+              </select>
             </div>
 
             <div className="create-field">
