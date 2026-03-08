@@ -37,7 +37,7 @@ function toRecord(data: ApiDynamicQrCode | null, label: string, destinationUrl: 
 
 async function postDynamicQRCode(
   token: string,
-  body: { label: string; destinationUrl: string },
+  body: { label: string; destinationUrl: string; folderId?: string },
 ): Promise<{ data: ApiDynamicQrCode | undefined; error: unknown }> {
   // The SDK dist does not bundle schema types; cast is required to call POST.
   const client = createQRapidClient(token) as { POST: (path: string, opts: { body: unknown }) => Promise<{ data: ApiDynamicQrCode | undefined; error: unknown }> };
