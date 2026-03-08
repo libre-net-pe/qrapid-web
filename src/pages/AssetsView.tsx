@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import type { Logo } from '@/types';
 import { AlertTriangleIcon } from '@/components/AlertTriangleIcon';
 import { useAuth } from '@/contexts/useAuth';
@@ -33,8 +33,51 @@ export function AssetsView() {
   const { user } = useAuth();
   const [logos, setLogos] = useState<Logo[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    let cancelled = false;
+
+    async function fetchLogos() {
+      setLoading(true);
+      setError(null);
+      try {
+        const token = await user!.getIdToken();
+        const api = createQRapidClient(token);
+
+        const { data: listData, error: listError } = await api.GET('/assets/logo');
+        if (listError || !listData) {
+          if (!cancelled) setError('Failed to load assets.');
+          return;
+        }
+
+        const withUrls = await Promise.all(
+          listData.data.map(async (summary) => {
+            const { data: dl } = await api.GET('/assets/logo/{logoId}', {
+              params: { path: { logoId: summary.logoId } },
+            });
+            return dl
+              ? { logoId: summary.logoId, filename: summary.filename, createdAt: summary.createdAt, downloadUrl: dl.downloadUrl }
+              : null;
+          })
+        );
+
+        if (!cancelled) {
+          setLogos(withUrls.filter((l): l is Logo => l !== null));
+        }
+      } catch {
+        if (!cancelled) setError('Failed to load assets.');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void fetchLogos();
+    return () => { cancelled = true; };
+  }, [user]);
 
   async function handleUpload(file: File) {
     if (!user) return;
@@ -112,7 +155,13 @@ export function AssetsView() {
   }
 
   let content: React.ReactNode;
-  if (error) {
+  if (loading) {
+    content = (
+      <div className="empty-state">
+        <p className="error-state-sub">Loading assets…</p>
+      </div>
+    );
+  } else if (error) {
     content = (
       <div className="error-state">
         <AlertTriangleIcon />
